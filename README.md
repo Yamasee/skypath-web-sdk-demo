@@ -44,6 +44,8 @@ If you are working on the SDK and need to test local changes, follow these steps
 cd path/to/skypath-web-sdk
 # Build the SDK if not already built
 npm run compile
+# Locate to dist folder
+cd dist
 # Link the SDK to the global npm registry
 npm link
 
@@ -52,6 +54,8 @@ cd path/to/skypath-web-sdk-demo
 # Link the local SDK to your project
 npm link skypath-sdk
 ```
+
+Use `npm link` inside the `dist` folder to create a symbolic link to the SDK.
 
 This will use your local version of the SkyPath SDK for development purposes. Make sure the you do this after installing the dependencies.
 
