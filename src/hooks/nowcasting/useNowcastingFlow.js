@@ -1,9 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-  CoreUtils,
-  GeoUtils,
-  Nowcasting,
-} from "skypath-sdk";
+import { CoreUtils, GeoUtils, Nowcasting } from "@yamasee/skypath-sdk-web";
 import { DEFAULT_DEBOUNCE_TIME } from "../../config";
 
 // Debounce time for updating hexIds

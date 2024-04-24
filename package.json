@@ -14,16 +14,17 @@
     ]
   },
   "dependencies": {
+    "@radix-ui/react-slider": "^1.1.2",
+    "@yamasee/skypath-sdk-web": "^0.1.4",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "deck.gl": "^9.0.6",
+    "mapbox-gl": "^3.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-map-gl": "^7.1.7",
     "react-scripts": "5.0.1",
-    "@radix-ui/react-slider": "^1.1.2",
-    "clsx": "^2.1.0",
-    "class-variance-authority": "^0.7.0",
-    "tailwind-merge": "^2.2.2",
-    "deck.gl": "^9.0.6",
-    "mapbox-gl": "^3.2.0"
+    "tailwind-merge": "^2.2.2"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.3"

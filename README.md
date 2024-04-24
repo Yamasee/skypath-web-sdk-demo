@@ -35,31 +35,7 @@ Run the following command to install all necessary dependencies:
 npm install
 ```
 
-### 4. Link the SkyPath SDK (For Developers)
-
-If you are working on the SDK and need to test local changes, follow these steps to link the SDK:
-
-```sh
-# Navigate to your local SkyPath SDK directory
-cd path/to/skypath-web-sdk
-# Build the SDK if not already built
-npm run compile
-# Locate to dist folder
-cd dist
-# Link the SDK to the global npm registry
-npm link
-
-# Navigate back to your demo project directory
-cd path/to/skypath-web-sdk-demo
-# Link the local SDK to your project
-npm link skypath-sdk
-```
-
-Use `npm link` inside the `dist` folder to create a symbolic link to the SDK.
-
-This will use your local version of the SkyPath SDK for development purposes. Make sure the you do this after installing the dependencies.
-
-### 5. Start the Application
+### 4. Start the Application
 
 Now, start the application:
 
