@@ -21,18 +21,18 @@ Before running the application, you need to set up the necessary environment var
 
 #### Variables
 
-`REACT_APP_SKYPATH_SDK_API_KEY` - Access key
+`VITE_REACT_SKYPATH_SDK_API_KEY` - Access key
 
-`REACT_APP_SKYPATH_SDK_BASE_URL` - Base URL
+`VITE_REACT_SKYPATH_SDK_BASE_URL` - Base URL
 
-`REACT_APP_MAPBOX_ACCESS_TOKEN` - MapBox access token; you can get it for free from [Mapbox](https://account.mapbox.com/)
+`VITE_REACT_MAPBOX_ACCESS_TOKEN` - MapBox access token; you can get it for free from [Mapbox](https://account.mapbox.com/)
 
 ### 3. Install Dependencies
 
 Run the following command to install all necessary dependencies:
 
 ```sh
-npm install
+pnpm install
 ```
 
 ### 4. Start the Application
@@ -40,10 +40,10 @@ npm install
 Now, start the application:
 
 ```sh
-npm start
+pnpm run dev
 ```
 
-The application should now be running on `http://localhost:3000`. Open this URL in your browser to view the demo.
+The application should now be running on `http://localhost:5173`. Open this URL in your browser to view the demo.
 
 ### Troubleshooting 🆘
 
