@@ -15,8 +15,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@yamasee/skypath-sdk-web':
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.2.3
+        version: 0.2.3
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -2576,8 +2576,8 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  '@yamasee/skypath-sdk-web@0.2.2':
-    resolution: {integrity: sha512-2ezBehzEDBOo8C+0OrITj+SQBM9IVbkY1UpKp79oT8sc3xfxWAz7ULlts1IR8zkh8KSmLMlGP6F3ZN7AGb4A9g==, tarball: https://npm.pkg.github.com/download/@yamasee/skypath-sdk-web/0.2.2/d5e5d7137678c58adba93aefa24dec621be9b441}
+  '@yamasee/skypath-sdk-web@0.2.3':
+    resolution: {integrity: sha512-JEv/YiH6MvsWCiUdc7FBzLlTpcX38+3BBWJxPM4UYhl5ZDshZKNSRvqIa7acOTrzolMRhU5MKxXAhLGxrJ+q9w==, tarball: https://npm.pkg.github.com/download/@yamasee/skypath-sdk-web/0.2.3/f0d9626af41921a1746edecf845e7ac6a69a8166}
 
   '@zip.js/zip.js@2.7.43':
     resolution: {integrity: sha512-kW7elA/Q1o5xusStfZeysCvheD1SvW3TWDfqTCmoWW4ALBSqKonZSTrQgdEGOUec2U/TLMSGq0SuSMTAxy4gFg==}
@@ -10552,7 +10552,7 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@yamasee/skypath-sdk-web@0.2.2':
+  '@yamasee/skypath-sdk-web@0.2.3':
     dependencies:
       '@turf/turf': 6.5.0
       geojson: 0.5.0
