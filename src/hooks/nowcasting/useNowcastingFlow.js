@@ -14,8 +14,8 @@ const checkMapIsReady = (map) => map?.loaded();
 /**
  * Custom hook to handle the nowcasting flow
  * 
- * @param {Nowcasting} nowcastingFlow Nowcasting flow instance
- * @param {Map} map Map instance
+ * @param {Object} nowcastingFlow Nowcasting flow instance
+ * @param {Object} map Map instance
  * @returns {Object} nowcastingData, changeViewState
  */
 export const useNowcastingFlow = (nowcastingFlow, map) => {
