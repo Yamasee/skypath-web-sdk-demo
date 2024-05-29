@@ -6,6 +6,10 @@ Quick Start Guide for the SkyPath React Demo using the Web JS SDK.
 
 This guide is designed to help you set up and run the SkyPath React demo application with minimal setup steps. Follow these steps to get started:
 
+### 0. Clone the Repository
+
+Make sure you have access to the SDK which is a dependency of this Demo app.
+
 ### 1. Clone the Repository
 
 First, clone the demo repository to your local machine:
