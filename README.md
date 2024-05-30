@@ -55,6 +55,6 @@ If you encounter any issues during the setup or have questions, please refer to 
 
 ### Additional Resources
 
-For further details on how to utilize the SDK, please refer to the full [SkyPath Web SDK documentation](https://github.com/Yamasee/skypath-web-sdk).
+For further details on how to utilize the SDK, please refer to the full [SkyPath Web SDK documentation](https://yamasee.github.io/docs/js/introduction).
 
 Happy coding! 🚀
