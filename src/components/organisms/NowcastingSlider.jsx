@@ -11,17 +11,6 @@ const NowcastingDivisionTick = () => (
 );
 
 const NowcastingSlider = forwardRef(({ ...props }, ref) => {
-  const getLabel = (i) => {
-    return (
-      <NowcastingDivisionLabel>
-        {i === 0
-          ? ("Now")
-          : (<>+{i}<span className="text-xs">h</span></>)
-        }
-      </NowcastingDivisionLabel>
-    );
-  };
-
   return (
     <Root ref={ref} {...props}>
       <Track>
@@ -33,7 +22,18 @@ const NowcastingSlider = forwardRef(({ ...props }, ref) => {
               <Division
                 key={i}
                 customTick={<NowcastingDivisionTick />}
-                customLabel={getLabel(i)}
+                customLabel={
+                  <NowcastingDivisionLabel>
+                    {!i ? (
+                      "Now"
+                    ) : (
+                      <>
+                        +{i}
+                        <span className="text-xs">h</span>
+                      </>
+                    )}
+                  </NowcastingDivisionLabel>
+                }
               />
             )),
         ]}
@@ -42,5 +42,7 @@ const NowcastingSlider = forwardRef(({ ...props }, ref) => {
     </Root>
   );
 });
+
+NowcastingSlider.displayName = "NowcastingSlider";
 
 export {NowcastingSlider};
