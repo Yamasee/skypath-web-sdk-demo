@@ -1,5 +1,5 @@
 // React
-import {useCallback, useEffect, useMemo, useState,} from "react";
+import {useCallback, useMemo, useState,} from "react";
 // Map
 import {Map} from "react-map-gl";
 import DeckGL from "@deck.gl/react";
@@ -52,7 +52,7 @@ const App = () => {
   const { nowcastingData, changeViewState } = useNowcastingFlow(nowcastingFlow, map);
   const { observationFlowData, updateConfig, updateMapPolygon } = useObservationsFlow(observationFlow, map);
 
-  const { filteredNowcastingData } = useNowcastingFiltering(nowcastingData, {
+  const { filteredData: nowcastingFilteredData } = useNowcastingFiltering(nowcastingData, {
     selectedSeverity: selectedMinSeverity,
     selectedAltitude: nowcastingAltDebounced,
     selectedForecast,
@@ -76,9 +76,11 @@ const App = () => {
   const handleLoadMap = useCallback(({ target }) => setMap(target), []);
 
   const nowcastingFeatureCollection = useMemo(() => {
-    const hexagons = Nowcasting.prepareNowcastingDataForMapHexagons({ data: filteredNowcastingData });
+    const hexagons = Nowcasting.prepareNowcastingDataForMapHexagons({
+      data: nowcastingFilteredData,
+    });
     return GeoUtils.getHexagonsFeatureCollection(hexagons);
-  }, [filteredNowcastingData]);
+  }, [nowcastingFilteredData]);
 
   const observationFeatureCollection = useMemo(() => {
     return GeoUtils.getHexagonsFeatureCollection(observationFlowData);

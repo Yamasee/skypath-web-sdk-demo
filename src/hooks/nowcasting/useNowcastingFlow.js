@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { CoreUtils, GeoUtils, Nowcasting } from "@yamasee/skypath-sdk-web";
+import { CoreUtils, GeoUtils } from "@yamasee/skypath-sdk-web";
 import { DEFAULT_DEBOUNCE_TIME } from "../../config";
 
 // Debounce time for updating hexIds
@@ -31,7 +31,7 @@ export const useNowcastingFlow = (nowcastingFlow, map) => {
 
     // Update hexIds
     updateHexIds(map, (hexIds) => {
-      nowcastingFlow.emit(Nowcasting.EMIT_EVENTS.UPDATE, { hexIds });
+      nowcastingFlow.updateConfig({ hexIds });
     });
   }, [map, nowcastingFlow]);
 
@@ -46,10 +46,10 @@ export const useNowcastingFlow = (nowcastingFlow, map) => {
 
     // Start nowcasting flow
     nowcastingFlow.start({ hexIds });
-    nowcastingFlow.on(Nowcasting.LISTEN_EVENTS.DATA, (data) => setNowcastingData(data));
+    nowcastingFlow.onData((data) => setNowcastingData(data));
 
     // Cleanup
-    return () => nowcastingFlow.terminate();
+    return () => nowcastingFlow.stop();
   }, [map, nowcastingFlow]);
 
 
