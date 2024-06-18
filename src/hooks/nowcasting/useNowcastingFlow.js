@@ -1,15 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { CoreUtils, GeoUtils, Nowcasting } from "@yamasee/skypath-sdk-web";
 import { DEFAULT_DEBOUNCE_TIME } from "../../config";
+import {checkMapIsReady} from "../../lib/general-utils";
 
 // Debounce time for updating hexIds
 const updateHexIds = CoreUtils.debounce((map, onResult) => {
   const hexIds = GeoUtils.getHexIdsFromMapBoxMap(map);
   onResult(hexIds);
 }, DEFAULT_DEBOUNCE_TIME);
-
-// Check if map is ready
-const checkMapIsReady = (map) => map?.loaded();
 
 /**
  * Custom hook to handle the nowcasting flow
@@ -31,7 +29,7 @@ export const useNowcastingFlow = (nowcastingFlow, map) => {
 
     // Update hexIds
     updateHexIds(map, (hexIds) => {
-      nowcastingFlow.emit(Nowcasting.EMIT_EVENTS.UPDATE, { hexIds });
+      nowcastingFlow.updateConfig({ hexIds });
     });
   }, [map, nowcastingFlow]);
 
@@ -45,11 +43,13 @@ export const useNowcastingFlow = (nowcastingFlow, map) => {
     const hexIds = GeoUtils.getHexIdsFromMapBoxMap(map);
 
     // Start nowcasting flow
-    nowcastingFlow.start({ hexIds });
-    nowcastingFlow.on(Nowcasting.LISTEN_EVENTS.DATA, (data) => setNowcastingData(data));
+    nowcastingFlow.onData((data) => setNowcastingData(data));
+    nowcastingFlow.start();
 
+    // update config file with the hexIds for initial load
+    nowcastingFlow.updateConfig({ hexIds });
     // Cleanup
-    return () => nowcastingFlow.terminate();
+    return () => nowcastingFlow.stop();
   }, [map, nowcastingFlow]);
 
 
