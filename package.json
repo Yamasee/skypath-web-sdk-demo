@@ -4,15 +4,16 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --force",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
     "@deck.gl/react": "^9.0.10",
+    "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-slider": "^1.1.2",
-    "@yamasee/skypath-sdk-web": "^0.2.5",
+    "@yamasee/skypath-sdk-web": "^0.2.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "deck.gl": "^9.0.6",

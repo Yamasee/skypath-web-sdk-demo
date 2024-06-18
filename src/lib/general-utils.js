@@ -7,3 +7,6 @@ export const normalizeAltitude = (value) => {
 export const formatAltitude = (value) => {
   return `FL${normalizeAltitude(value)}`;
 }
+
+// Check if map is ready
+export const checkMapIsReady = (map) => map?.loaded();

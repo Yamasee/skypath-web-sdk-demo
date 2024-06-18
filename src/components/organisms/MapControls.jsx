@@ -1,5 +1,5 @@
 import React from 'react'
-import { ALTITUDE_SLIDER_CONFIG } from '../../config';
+import { ALTITUDE_SLIDER_CONFIG, AIRCRAFT_CATEGORY_OPTIONS, SEVERITY_OPTIONS, HOURS_OPTIONS } from '../../config';
 import {AltitudeSlider} from "./AltitudeSlider";
 import {SeveritySlider} from "./SeveritySlider";
 import {NowcastingSlider} from "./NowcastingSlider";
@@ -7,6 +7,7 @@ import { Panel as SliderPanel } from "../molecules/Slider/Panel";
 import { AltitudeDisplay } from "../atoms/AltitudeDisplay";
 import { Divider } from "../atoms/Divider";
 import { AltRangeDisplay } from '../atoms/AltitudeRangeDisplay';
+import Dropdown from "../atoms/Dropdown";
 
 const BottomPanelsContainer = ({ children }) => {
   return (
@@ -26,9 +27,14 @@ const MapControls = ({
   bottomAlt,
   nowcastingAlt,
   topAlt,
+  aircraftCategory,
+  setAircraftCategory,
+  hours,
+  setHours,
 }) => {
   return (
     <>
+
       <div
         className="
         select-none
@@ -48,6 +54,8 @@ const MapControls = ({
         gap-1.5
         items-center"
       >
+        <Dropdown options={AIRCRAFT_CATEGORY_OPTIONS} onChange={setAircraftCategory} defaultValue={aircraftCategory} />
+        <Dropdown options={HOURS_OPTIONS} onChange={setHours} defaultValue={hours} />
         <AltRangeDisplay bottomAlt={bottomAlt} topAlt={topAlt} />
         <Divider />
         <AltitudeDisplay value={topAlt} />
@@ -73,7 +81,8 @@ const MapControls = ({
           <SeveritySlider
             value={[selectedMinSeverity]}
             onValueChange={([value]) => setSelectedMinSeverity(value)}
-            min={2}
+            options={SEVERITY_OPTIONS}
+            min={0}
             max={4}
           />
         </SliderPanel>

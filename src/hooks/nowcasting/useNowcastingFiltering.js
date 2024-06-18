@@ -20,8 +20,7 @@ export const useNowcastingFiltering = (data, filters) => {
       altitude: selectedAltitude,
       forecast: selectedForecast,
     };
-    const filteredData = Nowcasting.getNowcastingDataSlice({ data, filters });
-    return filteredData;
+    return Nowcasting.getNowcastingDataSlice({ data, filters });
   }, [
     data,
     selectedSeverity,
@@ -29,5 +28,5 @@ export const useNowcastingFiltering = (data, filters) => {
     selectedForecast,
   ]);
 
-  return { filteredData };
+  return { filteredNowcastingData: filteredData };
 }
