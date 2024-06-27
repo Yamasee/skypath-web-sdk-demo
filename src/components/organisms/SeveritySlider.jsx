@@ -5,7 +5,7 @@ const SeveritySlider = forwardRef(({ ...props }, ref) => (
   <Root ref={ref} {...props}>
     <Track>
       <Range />
-      {props?.options?.map((option) => <Division key={option.value} label={option.label} />)}
+      {props?.options?.map((option) => <Division key={option.value+option.label} label={option.label} />)}
     </Track>
     <Thumb size="sm" />
   </Root>
