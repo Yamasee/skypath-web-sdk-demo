@@ -5,7 +5,7 @@ import {checkMapIsReady} from "../../lib/general-utils";
 
 // Debounce time for updating hexIds
 const updateHexIds = CoreUtils.debounce((map, onResult) => {
-  const hexIds = GeoUtils.getHexIdsFromMapBoxMap(map);
+  const hexIds = GeoUtils.getHexIdsFromMapboxMap(map);
   onResult(hexIds);
 }, DEFAULT_DEBOUNCE_TIME);
 
@@ -40,7 +40,7 @@ export const useNowcastingFlow = (nowcastingFlow, map) => {
     if (!mapIsReady || !nowcastingFlow) return;
 
     // Get hexIds from map
-    const hexIds = GeoUtils.getHexIdsFromMapBoxMap(map);
+    const hexIds = GeoUtils.getHexIdsFromMapboxMap(map);
 
     // Start nowcasting flow
     nowcastingFlow.onData((data) => setNowcastingData(data));
