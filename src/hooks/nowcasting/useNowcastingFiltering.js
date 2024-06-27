@@ -28,5 +28,5 @@ export const useNowcastingFiltering = (data, filters) => {
     selectedForecast,
   ]);
 
-  return { filteredNowcastingData: filteredData };
+  return { filteredData };
 }

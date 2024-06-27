@@ -51,7 +51,7 @@ const App = () => {
   const { nowcastingData, changeViewState } = useNowcastingFlow(nowcastingFlow, map);
   const { observationFlowData, updateConfig, updateMapPolygon } = useObservationsFlow(observationFlow, map);
 
-  const { filteredNowcastingData } = useNowcastingFiltering(nowcastingData, {
+  const { filteredData: filteredNowcastingData } = useNowcastingFiltering(nowcastingData, {
     selectedSeverity: selectedMinSeverity,
     selectedAltitude: nowcastingAltDebounced,
     selectedForecast,
