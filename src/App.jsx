@@ -13,9 +13,6 @@ import {
   INITIAL_MAP_VIEW_STATE,
   MAP_GEOJSON_LAYER_CONFIG,
   MAP_OBSERVATION_CONFIG,
-  MAPBOX_ACCESS_TOKEN,
-  SKYPATH_API_BASE_URL,
-  SKYPATH_API_KEY,
 } from "./config";
 // SkyPath SDK
 import SkyPathSDK, {CoreUtils, GeoUtils, Nowcasting, Observations} from "@yamasee/skypath-sdk-web";
@@ -25,44 +22,60 @@ import {useNowcastingFiltering} from "./hooks/nowcasting/useNowcastingFiltering"
 import {useObservationsFlow} from "./hooks/obserbations/useObservationsFlow";
 import {useObservationsFiltering} from "./hooks/obserbations/useObservationsFiltering";
 
-const sdk = new SkyPathSDK({
-  apiKey: SKYPATH_API_KEY,
-  baseUrl: SKYPATH_API_BASE_URL,
-});
-const nowcastingFlow = sdk.createNowcastingFlow();
-const observationFlow = sdk.createObservationsFlow();
+const App = ({credentials}) => {
+  const sdk = useMemo(() => new SkyPathSDK({
+    apiKey: credentials.skypathApiKey,
+    baseUrl: credentials.skypathBaseUrl,
+  }), [credentials]);
+  const nowcastingFlow = useMemo(() => sdk.createNowcastingFlow(), [sdk]);
+  const observationFlow = useMemo(() => sdk.createObservationsFlow(), [sdk]);
 
-const App = () => {
   const [map, setMap] = useState(null);
   const [selectedForecast, setSelectedForecast] = useState(0);
-  const [selectedMinSeverity, setSelectedMinSeverity] = useState(Observations.availableConfigInputs.severity.smooth);
-  const [aircraftCategory, setAircraftCategory] = useState(Observations.availableConfigInputs.aircraftCategory.C60);
-  const [hours, setHours] = useState(Observations.availableConfigInputs.hours.twoHours);
-  const [selectedAltitudeDebounced, setSelectedAltitudeDebounced] = useState(ALTITUDE_SLIDER_INITIAL_VALUE);
-  const [selectedAltitude, setSelectedAltitude] = useState(ALTITUDE_SLIDER_INITIAL_VALUE);
-
-  const debouncedAltitudeChange = CoreUtils.debounce(
-    (value) => setSelectedAltitudeDebounced(value), 500
+  const [selectedMinSeverity, setSelectedMinSeverity] = useState(
+    Observations.availableConfigInputs.severity.smooth
+  );
+  const [aircraftCategory, setAircraftCategory] = useState(
+    Observations.availableConfigInputs.aircraftCategory.C60
+  );
+  const [hours, setHours] = useState(
+    Observations.availableConfigInputs.hours.twoHours
+  );
+  const [selectedAltitudeDebounced, setSelectedAltitudeDebounced] = useState(
+    ALTITUDE_SLIDER_INITIAL_VALUE
+  );
+  const [selectedAltitude, setSelectedAltitude] = useState(
+    ALTITUDE_SLIDER_INITIAL_VALUE
   );
 
-  const [ bottomAlt, nowcastingAlt, topAlt ] = selectedAltitude;
-  const [, nowcastingAltDebounced ] = selectedAltitudeDebounced;
+  const debouncedAltitudeChange = CoreUtils.debounce(
+    (value) => setSelectedAltitudeDebounced(value),
+    500
+  );
 
-  const { nowcastingData, changeViewState } = useNowcastingFlow(nowcastingFlow, map);
-  const { observationFlowData, updateConfig, updateMapPolygon } = useObservationsFlow(observationFlow, map);
+  const [bottomAlt, nowcastingAlt, topAlt] = selectedAltitude;
+  const [, nowcastingAltDebounced] = selectedAltitudeDebounced;
 
-  const { filteredData: filteredNowcastingData } = useNowcastingFiltering(nowcastingData, {
-    selectedSeverity: selectedMinSeverity,
-    selectedAltitude: nowcastingAltDebounced,
-    selectedForecast,
-  })
+  const { nowcastingData, changeViewState } = useNowcastingFlow(
+    nowcastingFlow,
+    map
+  );
+  const { observationFlowData, updateConfig, updateMapPolygon } =
+    useObservationsFlow(observationFlow, map);
 
-  const handleMapMove = CoreUtils.debounce(
-      () => {
-        updateMapPolygon();
-        changeViewState();
-      }, 500
-    );
+  const { filteredData: filteredNowcastingData } = useNowcastingFiltering(
+    nowcastingData,
+    {
+      selectedSeverity: selectedMinSeverity,
+      selectedAltitude: nowcastingAltDebounced,
+      selectedForecast,
+    }
+  );
+
+  const handleMapMove = CoreUtils.debounce(() => {
+    updateMapPolygon();
+    changeViewState();
+  }, 500);
 
   useObservationsFiltering(updateConfig, {
     aircraftCategory: aircraftCategory,
@@ -70,12 +83,14 @@ const App = () => {
     severity: selectedMinSeverity,
     altitudeFrom: selectedAltitudeDebounced[0],
     altitudeTo: selectedAltitudeDebounced[2],
-  })
+  });
 
   const handleLoadMap = useCallback(({ target }) => setMap(target), []);
 
   const nowcastingFeatureCollection = useMemo(() => {
-    const hexagons = Nowcasting.prepareNowcastingDataForMapHexagons({ data: filteredNowcastingData });
+    const hexagons = Nowcasting.prepareNowcastingDataForMapHexagons({
+      data: filteredNowcastingData,
+    });
     return GeoUtils.getHexagonsFeatureCollection(hexagons);
   }, [filteredNowcastingData]);
 
@@ -83,12 +98,10 @@ const App = () => {
     return GeoUtils.getHexagonsFeatureCollection(observationFlowData);
   }, [observationFlowData]);
 
-  const handleAltitudeChange = useCallback(
-    (value) => {
-      setSelectedAltitude(value);
-      debouncedAltitudeChange(value);
-    }, []
-  );
+  const handleAltitudeChange = useCallback((value) => {
+    setSelectedAltitude(value);
+    debouncedAltitudeChange(value);
+  }, []);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">
@@ -110,7 +123,7 @@ const App = () => {
         <Map
           onLoad={handleLoadMap}
           mapStyle={INITIAL_MAP_STYLE}
-          mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+          mapboxAccessToken={credentials.mapboxApiKey}
         />
       </DeckGL>
       <MapControls

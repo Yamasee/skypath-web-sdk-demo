@@ -19,32 +19,20 @@ git clone https://github.com/Yamasee/skypath-web-sdk-demo.git
 cd skypath-web-sdk-demo
 ```
 
-### 2. Set Up Environment Variables
-
-Before running the application, you need to set up the necessary environment variables. Copy the `.env.example` file to `.env`.
-
-#### Variables
-
-`VITE_REACT_SKYPATH_SDK_API_KEY` - Access key
-
-`VITE_REACT_SKYPATH_SDK_BASE_URL` - Base URL
-
-`VITE_REACT_MAPBOX_ACCESS_TOKEN` - MapBox access token; you can get it for free from [Mapbox](https://account.mapbox.com/)
-
-### 3. Install Dependencies
+### 2. Install Dependencies
 
 Run the following command to install all necessary dependencies:
 
 ```sh
-pnpm install
+npm install
 ```
 
-### 4. Start the Application
+### 3. Start the Application
 
 Now, start the application:
 
 ```sh
-pnpm run dev
+npm run dev
 ```
 
 The application should now be running on `http://localhost:5173`. Open this URL in your browser to view the demo.

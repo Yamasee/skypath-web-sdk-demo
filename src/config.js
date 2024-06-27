@@ -1,10 +1,5 @@
 import { Observations } from "@yamasee/skypath-sdk-web";
 
-// Environment variables
-const SKYPATH_API_KEY = import.meta.env.VITE_REACT_SKYPATH_SDK_API_KEY;
-const SKYPATH_API_BASE_URL = import.meta.env.VITE_REACT_SKYPATH_SDK_BASE_URL;
-const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_REACT_MAPBOX_ACCESS_TOKEN;
-
 // Initial state
 const INITIAL_MAP_VIEW_STATE = {
   longitude: -85,
@@ -13,8 +8,12 @@ const INITIAL_MAP_VIEW_STATE = {
   maxZoom: 5,
   minZoom: 3.5,
 };
-const ALTITUDE_SLIDER_INITIAL_VALUE = [Observations.availableConfigInputs.minAltitude, 35, Observations.availableConfigInputs.maxAltitude];
 
+const ALTITUDE_SLIDER_INITIAL_VALUE = [
+  Observations.availableConfigInputs.minAltitude, // Floor altitude
+  35, // Nowcasting
+  Observations.availableConfigInputs.maxAltitude, // Ceiling altitude
+];
 
 const SEVERITY_OPTIONS = [
   { value: Observations.availableConfigInputs.severity.smooth, label: 'Smooth' },
@@ -23,6 +22,7 @@ const SEVERITY_OPTIONS = [
   { value: Observations.availableConfigInputs.severity.moderate, label: 'Moderate' },
   { value: Observations.availableConfigInputs.severity.severe, label: 'Severe' },
 ]
+
 const AIRCRAFT_CATEGORY_OPTIONS = [
   { value: Observations.availableConfigInputs.aircraftCategory.C10, label: 'C10' },
   { value: Observations.availableConfigInputs.aircraftCategory.C20, label: 'C20' },
@@ -87,9 +87,7 @@ const MAP_OBSERVATION_CONFIG = {
   billboard: true,
   sizeMinPixels: 0.1,
   sizeMaxPixels: 1.5,
-  getPolygonOffset: ({ layerIndex }) => {
-    return [0, 0];
-  },
+  getPolygonOffset: () => [0, 0],
   getFillColor: (d) => {
     const severityColorMap = {
       0: [255, 250, 250, 100],
@@ -98,7 +96,6 @@ const MAP_OBSERVATION_CONFIG = {
       3: [255, 146, 16, 200],
       4: [248, 70, 14, 200],
       5: [248, 70, 14, 200],
-      // 5: [255, 0, 205, 230],
     };
     return severityColorMap[d.properties.sev];
   },
@@ -130,9 +127,6 @@ const MAP_H3_LAYER_CONFIG = {
 
 
 export {
-  SKYPATH_API_KEY,
-  SKYPATH_API_BASE_URL,
-  MAPBOX_ACCESS_TOKEN,
   INITIAL_MAP_VIEW_STATE,
   INITIAL_MAP_STYLE,
   MAP_GEOJSON_LAYER_CONFIG,
