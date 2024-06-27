@@ -11,4 +11,6 @@ const SeveritySlider = forwardRef(({ ...props }, ref) => (
   </Root>
 ));
 
+SeveritySlider.displayName = "SeveritySlider";
+
 export {SeveritySlider};
