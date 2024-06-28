@@ -1,4 +1,5 @@
 import { useState } from "react";
+import icon from '../public/favicon.ico';
 
 const AuthWrapper = ({children}) => {
   const [credentials, setCredentials] = useState();
@@ -40,7 +41,7 @@ const AuthWrapper = ({children}) => {
         <div>
           <img
             className="w-auto h-5 mx-auto pointer-events-none"
-            src="/favicon.ico"
+            src={icon}
             alt="SkyPath LTD"
           />
           <h2 className="mt-3 text-2xl font-bold leading-9 tracking-tight text-center text-gray-900">

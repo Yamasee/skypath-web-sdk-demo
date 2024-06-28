@@ -5,11 +5,6 @@
 /.pnp
 .pnp.js
 
-# Production build files
-/build
-/dist
-/dist-ssr
-
 # Test coverage directory
 /coverage
 
