@@ -84,46 +84,9 @@ jobs:
       - name: Build
         run: npm run build
 
-  activate-cd:
-    name: Activate CD
-    needs: [build]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-    uses: ./.github/workflows/cd.yml
-    secrets: inherit
-
-# jobs:
-#   install:
-#     name: Build
-#     runs-on: ubuntu-latest
-#     permissions:
-#       contents: read
-#       packages: read
-#     env:
-#       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-#       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v4
-
-#       - name: Setup Node.js
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: '18.14.2'
-#           cache: 'npm'
-
-#       - name: Configure npm to use the GitHub registry
-#         run: |
-#           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
-#           echo "@yamasee:registry=https://npm.pkg.github.com" >> ~/.npmrc
-
-#       - name: Install dependencies
-#         run: npm install --frozen-lockfile
-
-#       - name: Lint
-#         run: npm run lint
-
-#       - name: Test
-#         run: npm run test
-
-#       - name: Build
-#         run: npm run build
+  # activate-cd:
+  #   name: Activate CD
+  #   needs: [build]
+  #   if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+  #   uses: ./.github/workflows/cd.yml
+  #   secrets: inherit
