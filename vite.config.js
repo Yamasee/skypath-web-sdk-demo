@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: "/skypath-web-sdk-demo/dist/",
+  base: "/skypath-web-sdk-demo/",
 });
