@@ -31,4 +31,6 @@ const Root = forwardRef(({
   );
 });
 
+Root.displayName = "SliderRoot";
+
 export {Root};

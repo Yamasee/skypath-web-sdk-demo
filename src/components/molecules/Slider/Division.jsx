@@ -41,4 +41,6 @@ const Division = forwardRef(({
   );
 });
 
+Division.displayName = "Division";
+
 export {Division};

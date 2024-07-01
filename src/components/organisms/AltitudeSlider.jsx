@@ -56,4 +56,6 @@ const AltitudeSlider = forwardRef(
   )
 );
 
+AltitudeSlider.displayName = "AltitudeSlider";
+
 export {AltitudeSlider};

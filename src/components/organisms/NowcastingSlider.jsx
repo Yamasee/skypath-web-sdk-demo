@@ -43,4 +43,6 @@ const NowcastingSlider = forwardRef(({ ...props }, ref) => {
   );
 });
 
+NowcastingSlider.displayName = "NowcastingSlider";
+
 export {NowcastingSlider};
