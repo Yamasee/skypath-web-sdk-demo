@@ -62,9 +62,17 @@ jobs:
     permissions:
       pages: write
       id-token: write
+      contents: read
+      packages: read
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
 
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/setup-node@v4
         with:
           node-version: 20.11.1
@@ -91,4 +99,26 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Success pipeline execution notification
+        if: success()
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          payload: |
+            {
+              "text": ":white_check_mark: *${{ github.triggering_actor }}* successfully <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|deployed> *${{ github.repository }}* from *${{ github.ref_name }}* to GitHub Pages https://yamasee.github.io/skypath-web-sdk-demo/"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Failure pipeline execution notification
+        if: failure()
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          payload: |
+            {
+              "text": ":x: *${{ github.triggering_actor }}* failed to <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|deploy> *${{ github.repository }}* from *${{ github.ref_name }}* to GitHub Pages https://yamasee.github.io/skypath-web-sdk-demo/"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
