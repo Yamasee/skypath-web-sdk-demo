@@ -20,7 +20,17 @@ export const useNowcastingFlow = (nowcastingFlow, map) => {
 
   // Raw data from nowcasting flow
   const [nowcastingData, setNowcastingData] = useState({});
+  const [isActive, setIsActive] = useState(false);
 
+  const toggleFlow = () => {
+    if (isActive) {
+      nowcastingFlow.stop();
+      setIsActive(false);
+    } else {
+      nowcastingFlow.start();
+      setIsActive(true);
+    }
+  }
 
   const changeViewState = useCallback(() => {
     // Check if map is ready
@@ -45,6 +55,8 @@ export const useNowcastingFlow = (nowcastingFlow, map) => {
     // Start nowcasting flow
     nowcastingFlow.onData((data) => setNowcastingData(data));
     nowcastingFlow.start();
+    setIsActive(true);
+
 
     // update config file with the hexIds for initial load
     nowcastingFlow.updateConfig({ hexIds });
@@ -56,5 +68,6 @@ export const useNowcastingFlow = (nowcastingFlow, map) => {
   return {
     nowcastingData,
     changeViewState,
+    useFlowToggle: [isActive, toggleFlow],
   };
 };

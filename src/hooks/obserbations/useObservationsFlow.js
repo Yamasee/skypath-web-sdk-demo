@@ -12,6 +12,17 @@ import {checkMapIsReady} from "../../lib/general-utils";
 export const useObservationsFlow = (observationFlow, map) => {
   // Raw data from observation flow`
   const [observationFlowData, setObservationFlowData] = useState({});
+  const [isActive, setIsActive] = useState(false);
+
+  const toggleFlow = () => {
+    if (isActive) {
+      observationFlow.stop();
+      setIsActive(false);
+    } else {
+      observationFlow.start();
+      setIsActive(true);
+    }
+  }
 
   const updateConfig = useCallback((config) => {
     observationFlow.updateConfig(config);
@@ -38,15 +49,16 @@ export const useObservationsFlow = (observationFlow, map) => {
     // Start observation flow
     observationFlow.onData((data) => setObservationFlowData(data));
     observationFlow.start();
+    setIsActive(true);
 
     // Cleanup
     return () => observationFlow.stop();
   }, [observationFlow, map]);
 
-
   return {
     observationFlowData,
     updateConfig,
     updateMapPolygon,
+    useFlowToggle: [isActive, toggleFlow],
   };
 };
