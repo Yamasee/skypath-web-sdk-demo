@@ -16,4 +16,6 @@ const Range = forwardRef(({ className, ...props }, ref) => {
   );
 });
 
+Range.displayName = "Range";
+
 export {Range};

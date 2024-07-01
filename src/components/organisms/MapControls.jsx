@@ -1,4 +1,3 @@
-import React from 'react'
 import { ALTITUDE_SLIDER_CONFIG, AIRCRAFT_CATEGORY_OPTIONS, SEVERITY_OPTIONS, HOURS_OPTIONS } from '../../config';
 import {AltitudeSlider} from "./AltitudeSlider";
 import {SeveritySlider} from "./SeveritySlider";

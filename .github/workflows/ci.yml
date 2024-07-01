@@ -1,44 +1,129 @@
 name: CI
+
 on:
   push:
-    branches:
-      - "**"
+    branches: [main, master]
     paths-ignore:
       - 'README.md'
+  pull_request:
+    paths:
+      - '**/*'
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
+  install:
+    name: Install Dependencies
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
       packages: read
     env:
-      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.11.1
+          cache: npm
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Cache Dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install dependencies
+        if: 'steps.cache.outputs.cache-hit == false'
+        run: npm ci
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-22.04
+    needs: [install]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.11.1
+          cache: 'npm'
+
+      - name: Restore Dependencies
+        uses: actions/cache@v4
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - run: npm run lint
+
+  build:
+    name: Build
+    runs-on: ubuntu-22.04
+    needs: [lint]
+    permissions: write-all
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.14.2'
+          node-version: 20.11.1
           cache: 'npm'
 
-      - name: Configure npm to use the GitHub registry
-        run: |
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
-          echo "@yamasee:registry=https://npm.pkg.github.com" >> ~/.npmrc
-
-      - name: Install dependencies
-        run: npm install --frozen-lockfile
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Test
-        run: npm run test
+      - name: Restore Dependencies
+        uses: actions/cache@v4
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
 
       - name: Build
         run: npm run build
+
+  activate-cd:
+    name: Activate CD
+    needs: [build]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    uses: ./.github/workflows/cd.yml
+    secrets: inherit
+
+# jobs:
+#   install:
+#     name: Build
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: read
+#       packages: read
+#     env:
+#       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+#       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '18.14.2'
+#           cache: 'npm'
+
+#       - name: Configure npm to use the GitHub registry
+#         run: |
+#           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+#           echo "@yamasee:registry=https://npm.pkg.github.com" >> ~/.npmrc
+
+#       - name: Install dependencies
+#         run: npm install --frozen-lockfile
+
+#       - name: Lint
+#         run: npm run lint
+
+#       - name: Test
+#         run: npm run test
+
+#       - name: Build
+#         run: npm run build

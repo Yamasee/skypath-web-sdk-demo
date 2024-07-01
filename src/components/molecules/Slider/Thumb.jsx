@@ -79,4 +79,6 @@ const Thumb = forwardRef(({
   );
 });
 
+Thumb.displayName = "Thumb";
+
 export {Thumb};

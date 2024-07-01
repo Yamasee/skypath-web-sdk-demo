@@ -26,4 +26,6 @@ const Track = forwardRef(({ className, children, ...props }, ref) => {
   );
 });
 
+Track.displayName = "Track";
+
 export {Track};
