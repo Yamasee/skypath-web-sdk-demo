@@ -19,6 +19,7 @@ export const useObservationsFlow = (observationFlow, map) => {
       observationFlow.stop();
       setIsActive(false);
     } else {
+      observationFlow.onData((data) => setObservationFlowData(data));
       observationFlow.start();
       setIsActive(true);
     }

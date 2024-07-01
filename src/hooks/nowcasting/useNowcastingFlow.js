@@ -27,6 +27,7 @@ export const useNowcastingFlow = (nowcastingFlow, map) => {
       nowcastingFlow.stop();
       setIsActive(false);
     } else {
+      nowcastingFlow.onData((data) => setNowcastingData(data));
       nowcastingFlow.start();
       setIsActive(true);
     }

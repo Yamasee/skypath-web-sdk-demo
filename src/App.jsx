@@ -56,12 +56,15 @@ const App = ({credentials}) => {
   const [bottomAlt, nowcastingAlt, topAlt] = selectedAltitude;
   const [, nowcastingAltDebounced] = selectedAltitudeDebounced;
 
-  const { nowcastingData, changeViewState } = useNowcastingFlow(
+  const { nowcastingData, changeViewState, useFlowToggle: useNowcastingToggle } = useNowcastingFlow(
     nowcastingFlow,
     map
   );
-  const { observationFlowData, updateConfig, updateMapPolygon } =
+  const [isNowcastingActive, toggleIsNowcastingActive] = useNowcastingToggle;
+
+  const { observationFlowData, updateConfig, updateMapPolygon, useFlowToggle: useObservationsToggle } =
     useObservationsFlow(observationFlow, map);
+  const [isObservationActive, toggleIsObservationActive] = useObservationsToggle;
 
   const { filteredData: filteredNowcastingData } = useNowcastingFiltering(
     nowcastingData,
@@ -112,10 +115,12 @@ const App = ({credentials}) => {
         layers={[
           new GeoJsonLayer({
             ...MAP_GEOJSON_LAYER_CONFIG,
+            visible: isNowcastingActive,
             data: nowcastingFeatureCollection,
           }),
           new GeoJsonLayer({
             ...MAP_OBSERVATION_CONFIG,
+            visible: isObservationActive,
             data: observationFeatureCollection,
           }),
         ]}
@@ -140,6 +145,8 @@ const App = ({credentials}) => {
         setAircraftCategory={setAircraftCategory}
         setHours={setHours}
         hours={hours}
+        toggleIsObservationActive={toggleIsObservationActive}
+        toggleIsNowcastingActive={toggleIsNowcastingActive}
       />
     </div>
   );

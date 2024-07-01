@@ -30,6 +30,8 @@ const MapControls = ({
   setAircraftCategory,
   hours,
   setHours,
+  toggleIsObservationActive,
+  toggleIsNowcastingActive,
 }) => {
   return (
     <>
@@ -53,6 +55,8 @@ const MapControls = ({
         gap-1.5
         items-center"
       >
+        <button onClick={() => toggleIsNowcastingActive()}>nowcasting</button>
+        <button onClick={() => toggleIsObservationActive()}>observations</button>
         <Dropdown options={AIRCRAFT_CATEGORY_OPTIONS} onChange={setAircraftCategory} defaultValue={aircraftCategory} />
         <Dropdown options={HOURS_OPTIONS} onChange={setHours} defaultValue={hours} />
         <AltRangeDisplay bottomAlt={bottomAlt} topAlt={topAlt} />
