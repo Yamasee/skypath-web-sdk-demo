@@ -12,15 +12,16 @@ import {
   INITIAL_MAP_STYLE,
   INITIAL_MAP_VIEW_STATE,
   MAP_GEOJSON_LAYER_CONFIG,
-  MAP_OBSERVATION_CONFIG,
+  // MAP_OBSERVATION_CONFIG,
 } from "./config";
 // SkyPath SDK
 import SkyPathSDK, {CoreUtils, GeoUtils, Nowcasting, Observations} from "@yamasee/skypath-sdk-web";
 // Features
 import {useNowcastingFlow} from "./hooks/nowcasting/useNowcastingFlow";
 import {useNowcastingFiltering} from "./hooks/nowcasting/useNowcastingFiltering";
-import {useObservationsFlow} from "./hooks/obserbations/useObservationsFlow";
-import {useObservationsFiltering} from "./hooks/obserbations/useObservationsFiltering";
+import { cn } from "./lib/style-utils";
+// import {useObservationsFlow} from "./hooks/obserbations/useObservationsFlow";
+// import {useObservationsFiltering} from "./hooks/obserbations/useObservationsFiltering";
 
 const App = ({credentials}) => {
   const sdk = useMemo(() => new SkyPathSDK({
@@ -28,7 +29,7 @@ const App = ({credentials}) => {
     baseUrl: credentials.skypathBaseUrl,
   }), [credentials]);
   const nowcastingFlow = useMemo(() => sdk.createNowcastingFlow(), [sdk]);
-  const observationFlow = useMemo(() => sdk.createObservationsFlow(), [sdk]);
+  // const observationFlow = useMemo(() => sdk.createObservationsFlow(), [sdk]);
 
   const [map, setMap] = useState(null);
   const [selectedForecast, setSelectedForecast] = useState(0);
@@ -56,12 +57,17 @@ const App = ({credentials}) => {
   const [bottomAlt, nowcastingAlt, topAlt] = selectedAltitude;
   const [, nowcastingAltDebounced] = selectedAltitudeDebounced;
 
-  const { nowcastingData, changeViewState } = useNowcastingFlow(
+  const {
+    nowcastingData,
+    changeViewState,
+    toggle: toggleNowcasting,
+    isRunning: isRunningNowcasting,
+  } = useNowcastingFlow(
     nowcastingFlow,
     map
   );
-  const { observationFlowData, updateConfig, updateMapPolygon } =
-    useObservationsFlow(observationFlow, map);
+  // const { observationFlowData, updateConfig, updateMapPolygon } =
+  //   useObservationsFlow(observationFlow, map);
 
   const { filteredData: filteredNowcastingData } = useNowcastingFiltering(
     nowcastingData,
@@ -73,17 +79,17 @@ const App = ({credentials}) => {
   );
 
   const handleMapMove = CoreUtils.debounce(() => {
-    updateMapPolygon();
+    // updateMapPolygon();
     changeViewState();
   }, 500);
 
-  useObservationsFiltering(updateConfig, {
-    aircraftCategory: aircraftCategory,
-    hours: hours,
-    severity: selectedMinSeverity,
-    altitudeFrom: selectedAltitudeDebounced[0],
-    altitudeTo: selectedAltitudeDebounced[2],
-  });
+  // useObservationsFiltering(updateConfig, {
+  //   aircraftCategory: aircraftCategory,
+  //   hours: hours,
+  //   severity: selectedMinSeverity,
+  //   altitudeFrom: selectedAltitudeDebounced[0],
+  //   altitudeTo: selectedAltitudeDebounced[2],
+  // });
 
   const handleLoadMap = useCallback(({ target }) => setMap(target), []);
 
@@ -94,9 +100,9 @@ const App = ({credentials}) => {
     return GeoUtils.getHexagonsFeatureCollection(hexagons);
   }, [filteredNowcastingData]);
 
-  const observationFeatureCollection = useMemo(() => {
-    return GeoUtils.getHexagonsFeatureCollection(observationFlowData);
-  }, [observationFlowData]);
+  // const observationFeatureCollection = useMemo(() => {
+  //   return GeoUtils.getHexagonsFeatureCollection(observationFlowData);
+  // }, [observationFlowData]);
 
   const handleAltitudeChange = useCallback((value) => {
     setSelectedAltitude(value);
@@ -110,14 +116,15 @@ const App = ({credentials}) => {
         onViewStateChange={handleMapMove}
         controller
         layers={[
-          new GeoJsonLayer({
-            ...MAP_GEOJSON_LAYER_CONFIG,
-            data: nowcastingFeatureCollection,
-          }),
-          new GeoJsonLayer({
-            ...MAP_OBSERVATION_CONFIG,
-            data: observationFeatureCollection,
-          }),
+          isRunningNowcasting &&
+            new GeoJsonLayer({
+              ...MAP_GEOJSON_LAYER_CONFIG,
+              data: nowcastingFeatureCollection,
+            }),
+          // new GeoJsonLayer({
+          //   ...MAP_OBSERVATION_CONFIG,
+          //   data: observationFeatureCollection,
+          // }),
         ]}
       >
         <Map
@@ -141,6 +148,28 @@ const App = ({credentials}) => {
         setHours={setHours}
         hours={hours}
       />
+      <div className="absolute z-10 flex flex-col gap-1 p-2 top-2 right-2">
+        <button
+          className={cn(
+            "px-2 py-1 rounded-md",
+            isRunningNowcasting
+              ? "bg-gradient-to-b from-white to-gray-100 text-gray-950"
+              : "bg-gray-200 text-gray-400"
+          )}
+          onClick={toggleNowcasting}
+        >
+          Nowcasting
+        </button>
+        {/* <button
+          className={cn(
+            "px-2 py-1 bg-white rounded-md"
+            // getIsRunning() && "bg-red-500"
+          )}
+          // onClick={toggleObservations}
+        >
+          Observations
+        </button> */}
+      </div>
     </div>
   );
 };
