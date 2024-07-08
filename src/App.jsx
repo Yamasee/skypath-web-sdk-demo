@@ -19,6 +19,7 @@ import SkyPathSDK, {CoreUtils, GeoUtils, Nowcasting, Observations} from "@yamase
 // Features
 import {useNowcastingFlow} from "./hooks/nowcasting/useNowcastingFlow";
 import {useNowcastingFiltering} from "./hooks/nowcasting/useNowcastingFiltering";
+import { cn } from "./lib/style-utils";
 import {useObservationsFlow} from "./hooks/obserbations/useObservationsFlow";
 import {useObservationsFiltering} from "./hooks/obserbations/useObservationsFiltering";
 
@@ -56,12 +57,25 @@ const App = ({credentials}) => {
   const [bottomAlt, nowcastingAlt, topAlt] = selectedAltitude;
   const [, nowcastingAltDebounced] = selectedAltitudeDebounced;
 
-  const { nowcastingData, changeViewState } = useNowcastingFlow(
+  const {
+    nowcastingData,
+    changeViewState,
+    toggle: toggleNowcasting,
+    isRunning: isRunningNowcasting,
+  } = useNowcastingFlow(
     nowcastingFlow,
     map
   );
-  const { observationFlowData, updateConfig, updateMapPolygon } =
-    useObservationsFlow(observationFlow, map);
+  const {
+    observationFlowData,
+    updateConfig,
+    updateMapPolygon,
+    toggle: toggleObservations,
+    isRunning: isObservationsRunning,
+  } = useObservationsFlow(
+    observationFlow,
+    map
+  );
 
   const { filteredData: filteredNowcastingData } = useNowcastingFiltering(
     nowcastingData,
@@ -112,10 +126,12 @@ const App = ({credentials}) => {
         layers={[
           new GeoJsonLayer({
             ...MAP_GEOJSON_LAYER_CONFIG,
+            visible: isRunningNowcasting,
             data: nowcastingFeatureCollection,
           }),
           new GeoJsonLayer({
             ...MAP_OBSERVATION_CONFIG,
+            visible: isObservationsRunning,
             data: observationFeatureCollection,
           }),
         ]}
@@ -141,6 +157,30 @@ const App = ({credentials}) => {
         setHours={setHours}
         hours={hours}
       />
+      <div className="absolute z-10 flex flex-col gap-1 p-2 top-2 right-2">
+        <button
+          className={cn(
+            "px-2 py-1 rounded-md",
+            isRunningNowcasting
+              ? "bg-gradient-to-b from-white to-gray-100 text-gray-950"
+              : "bg-gray-200 text-gray-400"
+          )}
+          onClick={toggleNowcasting}
+        >
+          Nowcasting
+        </button>
+        <button
+          className={cn(
+            "px-2 py-1 bg-white rounded-md",
+            isObservationsRunning
+              ? "bg-gradient-to-b from-white to-gray-100 text-gray-950"
+              : "bg-gray-200 text-gray-400"
+          )}
+          onClick={toggleObservations}
+        >
+          Observations
+        </button>
+      </div>
     </div>
   );
 };
