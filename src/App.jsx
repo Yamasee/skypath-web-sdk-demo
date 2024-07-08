@@ -8,6 +8,7 @@ import {GeoJsonLayer} from "deck.gl";
 import {MapControls} from "./components/organisms/MapControls";
 // Config
 import {
+  MAPBOX_TOKEN,
   ALTITUDE_SLIDER_INITIAL_VALUE,
   INITIAL_MAP_STYLE,
   INITIAL_MAP_VIEW_STATE,
@@ -139,7 +140,7 @@ const App = ({credentials}) => {
         <Map
           onLoad={handleLoadMap}
           mapStyle={INITIAL_MAP_STYLE}
-          mapboxAccessToken={credentials.mapboxApiKey}
+          mapboxAccessToken={MAPBOX_TOKEN}
         />
       </DeckGL>
       <MapControls

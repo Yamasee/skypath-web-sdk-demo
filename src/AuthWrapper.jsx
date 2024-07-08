@@ -8,15 +8,10 @@ const AuthWrapper = ({children}) => {
     event.preventDefault();
     const formData = new FormData(event.target);
     const skypathApiKey = formData.get("skypath-api-key");
-    const mapboxApiKey = formData.get("mapbox-api-key");
     const skypathBaseUrl = formData.get("skypath-base-url");
 
     if (skypathApiKey?.trim()?.length < 20) {
       alert("Please provide a valid SkyPath API Key");
-      return;
-    }
-    if (mapboxApiKey?.trim()?.length < 80) {
-      alert("Please provide a valid Mapbox API Key");
       return;
     }
     if (skypathBaseUrl?.trim()?.length < 5) {
@@ -26,7 +21,6 @@ const AuthWrapper = ({children}) => {
 
     setCredentials({
       skypathApiKey,
-      mapboxApiKey,
       skypathBaseUrl,
     });
   };
@@ -65,19 +59,6 @@ const AuthWrapper = ({children}) => {
               />
             </div>
             <div>
-              <label htmlFor="mapbox-api-key" className="sr-only">
-                Mapbox API Key
-              </label>
-              <input
-                id="mapbox-api-key"
-                name="mapbox-api-key"
-                type="text"
-                required
-                className="relative text-ellipsis text-center block w-full border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-100 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:outline-violet-600 sm:text-sm sm:leading-6 px-8"
-                placeholder="Mapbox API Key"
-              />
-            </div>
-            <div>
               <label htmlFor="skypath-base-url" className="sr-only">
                 SkyPath Base URL
               </label>
@@ -105,10 +86,11 @@ const AuthWrapper = ({children}) => {
         <p className="text-sm leading-6 text-center text-gray-500">
           {"Don't have credentials yet? "}
           <a
-            href="https://skypath.io/start_a_trial/"
+            href="https://skypath.io/contact/"
+            target="_blank"
             className="font-semibold text-violet-600 hover:text-violet-500 focus:outline-violet-600"
           >
-            Start a trial
+            Contact us
           </a>
         </p>
       </div>
