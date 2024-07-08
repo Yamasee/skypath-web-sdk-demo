@@ -12,6 +12,9 @@ import {checkMapIsReady} from "../../lib/general-utils";
 export const useObservationsFlow = (observationFlow, map) => {
   // Raw data from observation flow`
   const [observationFlowData, setObservationFlowData] = useState({});
+  const [isRunning, setIsRunning] = useState(
+    observationFlow.getState() === "running"
+  );
 
   const updateConfig = useCallback((config) => {
     observationFlow.updateConfig(config);
@@ -28,8 +31,14 @@ export const useObservationsFlow = (observationFlow, map) => {
     observationFlow.updateConfig({ polygon: GeoUtils.getMapPolygon(map) })
   }, [observationFlow, map]);
 
+  const updateFlowIsRunningState = useCallback(() => {
+      const _isRunning = observationFlow.getState() === "running";
+      setIsRunning(_isRunning);
+    },[observationFlow]
+  )
+
   useEffect(() => {
-    if (!observationFlow) {
+    if (!observationFlow || !map) {
       return
     }
 
@@ -38,15 +47,27 @@ export const useObservationsFlow = (observationFlow, map) => {
     // Start observation flow
     observationFlow.onData((data) => setObservationFlowData(data));
     observationFlow.start();
+    updateFlowIsRunningState();
 
     // Cleanup
-    return () => observationFlow.stop();
+    return () => {
+      observationFlow.terminate();
+      updateFlowIsRunningState();
+    };
   }, [observationFlow, map]);
 
+  const toggle = useCallback(() => {
+    let _isRunning = observationFlow.getState() === "running";
+    observationFlow[_isRunning ? "stop" : "start"]();
+    _isRunning = observationFlow.getState() === "running";
+    setIsRunning(_isRunning);
+  }, [observationFlow]);
 
   return {
     observationFlowData,
     updateConfig,
     updateMapPolygon,
+    toggle,
+    isRunning,
   };
 };
