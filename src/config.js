@@ -1,5 +1,7 @@
 import { Observations } from "@yamasee/skypath-sdk-web";
 
+const MAPBOX_TOKEN = 'pk.eyJ1IjoieWFtYXNlZWluYyIsImEiOiJjbGxhdW82YTUwMWFkM2hxdW93NHF4cmVzIn0.c_NnlJUyYSz2lXUBWzDiJQ';
+
 // Initial state
 const INITIAL_MAP_VIEW_STATE = {
   longitude: -85,
@@ -127,6 +129,7 @@ const MAP_H3_LAYER_CONFIG = {
 
 
 export {
+  MAPBOX_TOKEN,
   INITIAL_MAP_VIEW_STATE,
   INITIAL_MAP_STYLE,
   MAP_GEOJSON_LAYER_CONFIG,
