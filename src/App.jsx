@@ -1,11 +1,11 @@
 // React
-import {useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 // Map
-import {Map} from "react-map-gl";
+import { Map } from "react-map-gl";
 import DeckGL from "@deck.gl/react";
-import {GeoJsonLayer} from "deck.gl";
+import { BitmapLayer, GeoJsonLayer, TileLayer } from "deck.gl";
 // Components
-import {MapControls} from "./components/organisms/MapControls";
+import { MapControls } from "./components/organisms/MapControls";
 // Config
 import {
   MAPBOX_TOKEN,
@@ -16,19 +16,28 @@ import {
   MAP_OBSERVATION_CONFIG,
 } from "./config";
 // SkyPath SDK
-import SkyPathSDK, {CoreUtils, GeoUtils, Nowcasting, Observations} from "@yamasee/skypath-sdk-web";
+import SkyPathSDK, {
+  CoreUtils,
+  GeoUtils,
+  Nowcasting,
+  Observations,
+} from "@yamasee/skypath-sdk-web";
 // Features
-import {useNowcastingFlow} from "./hooks/nowcasting/useNowcastingFlow";
-import {useNowcastingFiltering} from "./hooks/nowcasting/useNowcastingFiltering";
+import { useNowcastingFlow } from "./hooks/nowcasting/useNowcastingFlow";
+import { useNowcastingFiltering } from "./hooks/nowcasting/useNowcastingFiltering";
 import { cn } from "./lib/style-utils";
-import {useObservationsFlow} from "./hooks/obserbations/useObservationsFlow";
-import {useObservationsFiltering} from "./hooks/obserbations/useObservationsFiltering";
+import { useObservationsFlow } from "./hooks/obserbations/useObservationsFlow";
+import { useObservationsFiltering } from "./hooks/obserbations/useObservationsFiltering";
 
-const App = ({credentials}) => {
-  const sdk = useMemo(() => new SkyPathSDK({
-    apiKey: credentials.skypathApiKey,
-    baseUrl: credentials.skypathBaseUrl,
-  }), [credentials]);
+const App = ({ credentials }) => {
+  const sdk = useMemo(
+    () =>
+      new SkyPathSDK({
+        apiKey: credentials.skypathApiKey,
+        baseUrl: credentials.skypathBaseUrl,
+      }),
+    [credentials]
+  );
   const nowcastingFlow = useMemo(() => sdk.createNowcastingFlow(), [sdk]);
   const observationFlow = useMemo(() => sdk.createObservationsFlow(), [sdk]);
 
@@ -63,20 +72,14 @@ const App = ({credentials}) => {
     changeViewState,
     toggle: toggleNowcasting,
     isRunning: isRunningNowcasting,
-  } = useNowcastingFlow(
-    nowcastingFlow,
-    map
-  );
+  } = useNowcastingFlow(nowcastingFlow, map);
   const {
     observationFlowData,
     updateConfig,
     updateMapPolygon,
     toggle: toggleObservations,
     isRunning: isObservationsRunning,
-  } = useObservationsFlow(
-    observationFlow,
-    map
-  );
+  } = useObservationsFlow(observationFlow, map);
 
   const { filteredData: filteredNowcastingData } = useNowcastingFiltering(
     nowcastingData,
@@ -125,6 +128,28 @@ const App = ({credentials}) => {
         onViewStateChange={handleMapMove}
         controller
         layers={[
+          new TileLayer({
+            id: "TileLayer",
+            data: "https://cdn.lima-labs.com/{z}/{x}/{y}.png?api=demo",
+            maxZoom: 19,
+            minZoom: 0,
+
+            renderSubLayers: (props) => {
+              const { boundingBox } = props.tile;
+
+              return new BitmapLayer(props, {
+                data: null,
+                image: props.data,
+                bounds: [
+                  boundingBox[0][0],
+                  boundingBox[0][1],
+                  boundingBox[1][0],
+                  boundingBox[1][1],
+                ],
+              });
+            },
+            pickable: true,
+          }),
           new GeoJsonLayer({
             ...MAP_GEOJSON_LAYER_CONFIG,
             visible: isRunningNowcasting,
