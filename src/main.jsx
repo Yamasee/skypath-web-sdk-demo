@@ -13,7 +13,7 @@ ReactDOM.createRoot(root).render(
   <React.StrictMode>
     <ErrorBoundary FallbackComponent={Fallback}>
       <AuthWrapper>
-        {(credentials) => <App credentials={credentials} />}
+        {(sdk) => <App sdk={sdk} />}
       </AuthWrapper>
     </ErrorBoundary>
   </React.StrictMode>

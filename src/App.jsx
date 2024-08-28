@@ -16,7 +16,7 @@ import {
   MAP_OBSERVATION_CONFIG,
 } from "./config";
 // SkyPath SDK
-import SkyPathSDK, {CoreUtils, GeoUtils, Nowcasting, Observations} from "@yamasee/skypath-sdk-web";
+import {CoreUtils, GeoUtils, Nowcasting, Observations} from "@yamasee/skypath-sdk-web";
 // Features
 import {useNowcastingFlow} from "./hooks/nowcasting/useNowcastingFlow";
 import {useNowcastingFiltering} from "./hooks/nowcasting/useNowcastingFiltering";
@@ -24,11 +24,7 @@ import { cn } from "./lib/style-utils";
 import {useObservationsFlow} from "./hooks/obserbations/useObservationsFlow";
 import {useObservationsFiltering} from "./hooks/obserbations/useObservationsFiltering";
 
-const App = ({credentials}) => {
-  const sdk = useMemo(() => new SkyPathSDK({
-    apiKey: credentials.skypathApiKey,
-    baseUrl: credentials.skypathBaseUrl,
-  }), [credentials]);
+const App = ({ sdk }) => {
   const nowcastingFlow = useMemo(() => sdk.createNowcastingFlow(), [sdk]);
   const observationFlow = useMemo(() => sdk.createObservationsFlow(), [sdk]);
 
