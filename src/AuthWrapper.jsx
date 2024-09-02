@@ -5,32 +5,50 @@ import { Button } from "./components/atoms/Button";
 import { TextInput } from "./components/atoms/TextInput";
 import pkg from "../package.json";
 
-const sdkVersion = pkg.dependencies["@yamasee/skypath-sdk-web"]?.replace("^", "") || "N/A";
+const INITIAL_FROM_VALUES = {
+  apiBaseUrl: "",
+  apiKey: "",
+  userId: "",
+  companyName: "",
+  signedJwt: "",
+  partnerId: "",
+};
 
 const SUPPORTED_AUTH_OPTIONS = {
   API_KEY: "API_KEY",
   SIGNED_JWT: "SIGNED_JWT",
 };
 
+const ERROR_MESSAGES = {
+  BASE_URL: "Base URL is required",
+  API_KEY: "Missing required fields",
+  SIGNED_JWT: "Missing required fields",
+};
+
+const SDK_VERSION = pkg.dependencies["@yamasee/skypath-sdk-web"]?.replace("^", "") || "N/A";
+
 const AuthWrapper = ({ children }) => {
   const [SDK, setSDK] = useState();
   const [authOption, setAuthOption] = useState(null);
-  const [authData, setAuthData] = useState({
-    apiBaseUrl: "",
-    apiKey: "",
-    userId: "",
-    companyName: "",
-    signedJwt: "",
-    partnerId: "",
-  });
+  const [error, setError] = useState(null);
+  const [authData, setAuthData] = useState({ ...INITIAL_FROM_VALUES });
 
   const handleSubmit = () => {
     const { apiBaseUrl, apiKey, userId, companyName, signedJwt, partnerId } =
       authData;
 
+    if (!apiBaseUrl) {
+      setError({ message: ERROR_MESSAGES.BASE_URL });
+      return;
+    }
+
     let authParams = {};
 
     if (authOption === SUPPORTED_AUTH_OPTIONS.API_KEY) {
+      if ([apiKey, userId, companyName].some((v) => !v)) {
+        setError({ message: ERROR_MESSAGES.API_KEY });
+        return;
+      }
       authParams = {
         apiKey,
         userId,
@@ -39,6 +57,10 @@ const AuthWrapper = ({ children }) => {
     }
 
     if (authOption === SUPPORTED_AUTH_OPTIONS.SIGNED_JWT) {
+      if ([signedJwt, partnerId].some((v) => !v)) {
+        setError({ message: ERROR_MESSAGES.SIGNED_JWT });
+        return;
+      }
       authParams = {
         authCallback: () => ({ jwt: signedJwt, partnerId }),
       };
@@ -48,11 +70,18 @@ const AuthWrapper = ({ children }) => {
       apiBaseUrl,
       ...authParams,
     })
-      .then(setSDK)
+      .then((_sdk) => {
+        setSDK(_sdk);
+        setError(null);
+      })
       .catch((error) => {
-        alert(error.message);
-        setAuthData(null);
-      });
+        setSDK(null);
+        setError(error);
+      })
+      .finally(() => {
+        setAuthData({ ...INITIAL_FROM_VALUES});
+      }
+    );
   };
 
   const handleInputChange = (e) =>
@@ -61,7 +90,7 @@ const AuthWrapper = ({ children }) => {
       [e.target.name]: e.target.value,
     }));
 
-  if (SDK) return children(SDK);
+  if (SDK && !error) return children(SDK);
 
   return (
     <div className="flex items-center justify-center flex-1 min-h-full px-4 py-12 select-none sm:px-6 lg:px-8">
@@ -75,8 +104,8 @@ const AuthWrapper = ({ children }) => {
           <h1 className="text-2xl font-bold leading-9 tracking-tight text-center text-gray-900">
             SkyPath Web SDK Demo App
           </h1>
-          <div className="px-2 py-1 text-xs font-semibold leading-4 text-center text-white rounded-md bg-violet-600 border border-gray-200">
-            SDK v{sdkVersion}
+          <div className="px-2 py-1 text-xs font-semibold leading-4 text-center text-white border border-gray-200 rounded-md bg-violet-600">
+            SDK v{SDK_VERSION}
           </div>
         </div>
 
@@ -87,12 +116,18 @@ const AuthWrapper = ({ children }) => {
             </h3>
             <div className="flex gap-2">
               <Button
-                onClick={() => setAuthOption(SUPPORTED_AUTH_OPTIONS.API_KEY)}
+                onClick={() => {
+                  setAuthOption(SUPPORTED_AUTH_OPTIONS.API_KEY);
+                  setError(null);
+                }}
               >
                 API Key
               </Button>
               <Button
-                onClick={() => setAuthOption(SUPPORTED_AUTH_OPTIONS.SIGNED_JWT)}
+                onClick={() => {
+                  setAuthOption(SUPPORTED_AUTH_OPTIONS.SIGNED_JWT);
+                  setError(null);
+                }}
               >
                 Signed JWT
               </Button>
@@ -108,7 +143,6 @@ const AuthWrapper = ({ children }) => {
                 type="text"
                 value={authData.apiBaseUrl}
                 onChange={handleInputChange}
-                required
                 placeholder="Base URL"
               />
               <TextInput
@@ -116,7 +150,6 @@ const AuthWrapper = ({ children }) => {
                 type="text"
                 value={authData.apiKey}
                 onChange={handleInputChange}
-                required
                 placeholder="API Key"
               />
               <TextInput
@@ -124,7 +157,6 @@ const AuthWrapper = ({ children }) => {
                 type="text"
                 value={authData.userId}
                 onChange={handleInputChange}
-                required
                 placeholder="User ID"
               />
               <TextInput
@@ -132,10 +164,14 @@ const AuthWrapper = ({ children }) => {
                 type="text"
                 value={authData.companyName}
                 onChange={handleInputChange}
-                required
                 placeholder="Company name"
               />
             </div>
+            {error?.message && (
+              <div className="p-2 text-sm font-semibold leading-4 text-center text-red-500 bg-red-100 rounded-md">
+                {error.message}
+              </div>
+            )}
             <div className="flex flex-col gap-2">
               <Button size="md" onClick={handleSubmit}>
                 Start
@@ -159,7 +195,6 @@ const AuthWrapper = ({ children }) => {
                 type="text"
                 value={authData.apiBaseUrl}
                 onChange={handleInputChange}
-                required
                 placeholder="Base URL"
               />
               <TextInput
@@ -167,7 +202,6 @@ const AuthWrapper = ({ children }) => {
                 type="text"
                 value={authData.signedJwt}
                 onChange={handleInputChange}
-                required
                 placeholder="Signed JWT"
               />
               <TextInput
@@ -175,10 +209,14 @@ const AuthWrapper = ({ children }) => {
                 type="text"
                 value={authData.partnerId}
                 onChange={handleInputChange}
-                required
                 placeholder="Partner ID"
               />
             </div>
+            {error?.message && (
+              <div className="p-2 text-sm font-semibold leading-4 text-center text-red-500 bg-red-100 rounded-md">
+                {error.message}
+              </div>
+            )}
             <div className="flex flex-col gap-2">
               <Button size="md" onClick={handleSubmit}>
                 Start
@@ -194,23 +232,25 @@ const AuthWrapper = ({ children }) => {
           </div>
         )}
 
-        <p className="text-sm leading-6 text-center text-gray-500">
-          {"Don't have credentials yet? "}
-          <a
-            href="https://skypath.io/contact/"
-            target="_blank"
-            className="font-semibold text-violet-600 hover:text-violet-500 focus:outline-violet-600"
-          >
-            Contact us
-          </a>
+        <div className="flex flex-col justify-center w-full gap-2 align-center">
+          <p className="text-sm leading-6 text-center text-gray-500">
+            {"Don't have credentials yet? "}
+            <a
+              href="https://skypath.io/contact/"
+              target="_blank"
+              className="font-semibold text-violet-600 hover:text-violet-500 focus:outline-violet-600"
+            >
+              Contact us
+            </a>
+          </p>
           <a
             href="https://docs.skypath.io/js/introduction"
             target="_blank"
-            className="block pt-3 text-xs font-semibold leading-4 text-center text-violet-600 hover:text-violet-500 focus:outline-violet-600"
+            className="text-xs font-semibold leading-4 text-center text-violet-600 hover:text-violet-500 focus:outline-violet-600"
           >
             SDK Documentation
           </a>
-        </p>
+        </div>
       </div>
     </div>
   );
