@@ -1,87 +1,192 @@
 import { useState } from "react";
-import icon from '../public/favicon.ico';
+import createSkyPathSDK from "@yamasee/skypath-sdk-web";
+import icon from "../public/favicon.ico";
+import { Button } from "./components/atoms/Button";
+import { TextInput } from "./components/atoms/TextInput";
 
-const AuthWrapper = ({children}) => {
-  const [credentials, setCredentials] = useState();
+const SUPPORTED_AUTH_OPTIONS = {
+  API_KEY: "API_KEY",
+  SIGNED_JWT: "SIGNED_JWT",
+};
 
-  const handleSubmitCredentials = (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const skypathApiKey = formData.get("skypath-api-key");
-    const skypathBaseUrl = formData.get("skypath-base-url");
+const AuthWrapper = ({ children }) => {
+  const [SDK, setSDK] = useState();
+  const [authOption, setAuthOption] = useState(null);
+  const [authData, setAuthData] = useState({
+    apiBaseUrl: "",
+    apiKey: "",
+    userId: "",
+    companyName: "",
+    signedJwt: "",
+    partnerId: "",
+  });
 
-    if (skypathApiKey?.trim()?.length < 20) {
-      alert("Please provide a valid SkyPath API Key");
-      return;
+  const handleSubmit = () => {
+    const { apiBaseUrl, apiKey, userId, companyName, signedJwt, partnerId } =
+      authData;
+
+    let authParams = {};
+
+    if (authOption === SUPPORTED_AUTH_OPTIONS.API_KEY) {
+      authParams = {
+        apiKey,
+        userId,
+        companyName,
+      };
     }
-    if (skypathBaseUrl?.trim()?.length < 5) {
-      alert("Please provide a valid SkyPath Base URL");
-      return;
+
+    if (authOption === SUPPORTED_AUTH_OPTIONS.SIGNED_JWT) {
+      authParams = {
+        authCallback: () => ({ jwt: signedJwt, partnerId }),
+      };
     }
 
-    setCredentials({
-      skypathApiKey,
-      skypathBaseUrl,
-    });
+    createSkyPathSDK({
+      apiBaseUrl,
+      ...authParams,
+    })
+      .then(setSDK)
+      .catch((error) => {
+        alert(error.message);
+        setAuthData(null);
+      });
   };
 
-  if (credentials) {
-    return children(credentials);
-  }
+  const handleInputChange = (e) =>
+    setAuthData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+
+  if (SDK) return children(SDK);
 
   return (
     <div className="flex items-center justify-center flex-1 min-h-full px-4 py-12 select-none sm:px-6 lg:px-8">
       <div className="w-full max-w-sm space-y-10">
-        <div>
+        <div className="flex flex-col items-center justify-center gap-3">
           <img
-            className="w-auto h-5 mx-auto pointer-events-none"
+            className="h-5 pointer-events-none"
             src={icon}
             alt="SkyPath LTD"
           />
-          <h2 className="mt-3 text-2xl font-bold leading-9 tracking-tight text-center text-gray-900">
-            Provide your credentials
-          </h2>
+          <h1 className="text-2xl font-bold leading-9 tracking-tight text-center text-gray-900">
+            SkyPath Web SDK Demo App
+          </h1>
         </div>
-        <form className="space-y-6" onSubmit={handleSubmitCredentials}>
-          <div className="relative -space-y-px rounded-md shadow-sm">
-            <div className="absolute inset-0 z-10 rounded-md pointer-events-none ring-1 ring-inset ring-gray-300" />
-            <div>
-              <label htmlFor="skypath-api-key" className="sr-only">
-                SkyPath API Key
-              </label>
-              <input
-                id="skypath-api-key"
-                name="skypath-api-key"
-                type="text"
-                required
-                className="relative text-center block w-full rounded-t-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-100 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:outline-violet-600 sm:text-sm sm:leading-6 px-8"
-                placeholder="SkyPath API Key"
-              />
-            </div>
-            <div>
-              <label htmlFor="skypath-base-url" className="sr-only">
-                SkyPath Base URL
-              </label>
-              <input
-                id="skypath-base-url"
-                name="skypath-base-url"
-                defaultValue={"api.skypath.io"}
-                type="text"
-                required
-                className="relative text-center block w-full rounded-b-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-100 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:outline-violet-600 sm:text-sm sm:leading-6 px-8"
-                placeholder="SkyPath Base URL"
-              />
+
+        {!authOption && (
+          <div className="flex flex-col gap-4 p-4 border border-gray-200 rounded-md">
+            <h3 className="text-lg font-semibold leading-6 text-center text-gray-900">
+              Select authorization option
+            </h3>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => setAuthOption(SUPPORTED_AUTH_OPTIONS.API_KEY)}
+              >
+                API Key
+              </Button>
+              <Button
+                onClick={() => setAuthOption(SUPPORTED_AUTH_OPTIONS.SIGNED_JWT)}
+              >
+                Signed JWT
+              </Button>
             </div>
           </div>
-          <div>
-            <button
-              type="submit"
-              className="flex w-full justify-center rounded-md bg-violet-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white hover:bg-violet-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
-            >
-              Start
-            </button>
+        )}
+
+        {authOption === SUPPORTED_AUTH_OPTIONS.API_KEY && (
+          <div className="space-y-6">
+            <div className="relative -space-y-px rounded-md shadow-sm">
+              <TextInput
+                name="apiBaseUrl"
+                type="text"
+                value={authData.apiBaseUrl}
+                onChange={handleInputChange}
+                required
+                placeholder="Base URL"
+              />
+              <TextInput
+                name="apiKey"
+                type="text"
+                value={authData.apiKey}
+                onChange={handleInputChange}
+                required
+                placeholder="API Key"
+              />
+              <TextInput
+                name="userId"
+                type="text"
+                value={authData.userId}
+                onChange={handleInputChange}
+                required
+                placeholder="User ID"
+              />
+              <TextInput
+                name="companyName"
+                type="text"
+                value={authData.companyName}
+                onChange={handleInputChange}
+                required
+                placeholder="Company name"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Button size="md" onClick={handleSubmit}>
+                Start
+              </Button>
+              <Button
+                size="md"
+                variant="secondary"
+                onClick={() => setAuthOption(null)}
+              >
+                Back
+              </Button>
+            </div>
           </div>
-        </form>
+        )}
+
+        {authOption === SUPPORTED_AUTH_OPTIONS.SIGNED_JWT && (
+          <div className="space-y-6">
+            <div className="relative -space-y-px rounded-md shadow-sm">
+              <TextInput
+                name="apiBaseUrl"
+                type="text"
+                value={authData.apiBaseUrl}
+                onChange={handleInputChange}
+                required
+                placeholder="Base URL"
+              />
+              <TextInput
+                name="signedJwt"
+                type="text"
+                value={authData.signedJwt}
+                onChange={handleInputChange}
+                required
+                placeholder="Signed JWT"
+              />
+              <TextInput
+                name="partnerId"
+                type="text"
+                value={authData.partnerId}
+                onChange={handleInputChange}
+                required
+                placeholder="Partner ID"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Button size="md" onClick={handleSubmit}>
+                Start
+              </Button>
+              <Button
+                size="md"
+                variant="secondary"
+                onClick={() => setAuthOption(null)}
+              >
+                Back
+              </Button>
+            </div>
+          </div>
+        )}
 
         <p className="text-sm leading-6 text-center text-gray-500">
           {"Don't have credentials yet? "}
@@ -96,6 +201,6 @@ const AuthWrapper = ({children}) => {
       </div>
     </div>
   );
-}
+};
 
 export default AuthWrapper;
