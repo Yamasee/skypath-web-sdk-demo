@@ -75,9 +75,7 @@ const AuthWrapper = ({ children }) => {
           <h1 className="text-2xl font-bold leading-9 tracking-tight text-center text-gray-900">
             SkyPath Web SDK Demo App
           </h1>
-          <div
-            className="px-2 py-1 text-xs font-semibold leading-4 text-center text-white rounded-md bg-violet-600"
-          >
+          <div className="px-2 py-1 text-xs font-semibold leading-4 text-center text-white rounded-md bg-violet-600 border border-gray-200">
             SDK v{sdkVersion}
           </div>
         </div>
@@ -204,6 +202,13 @@ const AuthWrapper = ({ children }) => {
             className="font-semibold text-violet-600 hover:text-violet-500 focus:outline-violet-600"
           >
             Contact us
+          </a>
+          <a
+            href="https://docs.skypath.io/js/introduction"
+            target="_blank"
+            className="block pt-3 text-xs font-semibold leading-4 text-center text-violet-600 hover:text-violet-500 focus:outline-violet-600"
+          >
+            SDK Documentation
           </a>
         </p>
       </div>
