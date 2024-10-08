@@ -45,8 +45,6 @@ const HOURS_OPTIONS = [
   { value: Observations.availableConfigInputs.hours.twoHours, label: '2h' },
   { value: Observations.availableConfigInputs.hours.threeHours, label: '3h' },
   { value: Observations.availableConfigInputs.hours.fourHours, label: '4h' },
-  { value: Observations.availableConfigInputs.hours.fiveHours, label: '5h' },
-  { value: Observations.availableConfigInputs.hours.sixHours, label: '6h' },
 ]
 
 // Default configurations
