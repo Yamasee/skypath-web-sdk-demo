@@ -23,6 +23,9 @@ import {useNowcastingFiltering} from "./hooks/nowcasting/useNowcastingFiltering"
 import { cn } from "./lib/style-utils";
 import {useObservationsFlow} from "./hooks/obserbations/useObservationsFlow";
 import {useObservationsFiltering} from "./hooks/obserbations/useObservationsFiltering";
+import {fetchAdsbData} from "./hooks/adsb/adsbFlow";
+
+
 
 const App = ({ sdk }) => {
   const nowcastingFlow = useMemo(() => sdk.createNowcastingFlow(), [sdk]);
@@ -86,6 +89,7 @@ const App = ({ sdk }) => {
   const handleMapMove = CoreUtils.debounce(() => {
     updateMapPolygon();
     changeViewState();
+    loadAdsbData();
   }, 500);
 
   useObservationsFiltering(updateConfig, {
@@ -114,6 +118,15 @@ const App = ({ sdk }) => {
     debouncedAltitudeChange(value);
   }, []);
 
+  const [adsbData, setAdsbData] = useState([]);
+
+  const loadAdsbData = () => {
+    const hexIds = GeoUtils.getHexIdsFromMapboxMap(map);
+    fetchAdsbData(hexIds).then((data) => {
+      setAdsbData(data);
+    });
+  }
+
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       <DeckGL
@@ -125,6 +138,11 @@ const App = ({ sdk }) => {
             ...MAP_GEOJSON_LAYER_CONFIG,
             visible: isRunningNowcasting,
             data: nowcastingFeatureCollection,
+          }),
+          new GeoJsonLayer({
+            ...MAP_OBSERVATION_CONFIG,
+            visible: true,
+            data: adsbData,
           }),
           new GeoJsonLayer({
             ...MAP_OBSERVATION_CONFIG,

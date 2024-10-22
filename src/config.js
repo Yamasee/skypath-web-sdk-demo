@@ -54,7 +54,7 @@ const ALTITUDE_SLIDER_CONFIG = {
   step: 1,
   minStepsBetweenThumbs: 3,
 };
-const INITIAL_MAP_STYLE = "mapbox://styles/mapbox/streets-v10";
+const INITIAL_MAP_STYLE = "mapbox://styles/yamaseeinc/ck8bqiz9a159x1ik6vv8gqds6";
 const DEFAULT_DEBOUNCE_TIME = 500;
 // Map layers configurations
 const MAP_GEOJSON_LAYER_CONFIG = {
