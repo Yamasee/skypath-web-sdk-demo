@@ -103,7 +103,7 @@ const App = ({ sdk }) => {
   );
 
   const { filteredData: filteredAdsbData } = useAdsbFiltering(adsbData, {
-    selectedHoursAgo: hours,
+    selectedHoursAgo: Number(hours),
     selectedAltitudeFrom: selectedAltitudeDebounced[0],
     selectedAltitudeTo: selectedAltitudeDebounced[2],
     selectedSeverity: selectedMinSeverity,
