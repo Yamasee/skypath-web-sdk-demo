@@ -1,11 +1,11 @@
 // React
-import {useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 // Map
-import {Map} from "react-map-gl";
+import { Map } from "react-map-gl";
 import DeckGL from "@deck.gl/react";
-import {GeoJsonLayer} from "deck.gl";
+import { GeoJsonLayer } from "deck.gl";
 // Components
-import {MapControls} from "./components/organisms/MapControls";
+import { MapControls } from "./components/organisms/MapControls";
 // Config
 import {
   MAPBOX_TOKEN,
@@ -16,18 +16,37 @@ import {
   MAP_OBSERVATION_CONFIG,
 } from "./config";
 // SkyPath SDK
-import {CoreUtils, GeoUtils, Nowcasting, Observations} from "@yamasee/skypath-sdk-web";
+import {
+  CoreUtils,
+  GeoUtils,
+  Nowcasting,
+  Observations,
+  ADSB,
+} from "@yamasee/skypath-sdk-web";
 // Features
-import {useNowcastingFlow} from "./hooks/nowcasting/useNowcastingFlow";
-import {useNowcastingFiltering} from "./hooks/nowcasting/useNowcastingFiltering";
+import { useNowcastingFlow } from "./hooks/nowcasting/useNowcastingFlow";
+import { useNowcastingFiltering } from "./hooks/nowcasting/useNowcastingFiltering";
 import { cn } from "./lib/style-utils";
-import {useObservationsFlow} from "./hooks/obserbations/useObservationsFlow";
-import {useObservationsFiltering} from "./hooks/obserbations/useObservationsFiltering";
+import { useObservationsFlow } from "./hooks/obserbations/useObservationsFlow";
+import { useObservationsFiltering } from "./hooks/obserbations/useObservationsFiltering";
+import { useAdsbFlow } from "./hooks/adsb/useAdsbFlow";
+import { useAdsbFiltering } from "./hooks/adsb/useAdsbFiltering";
+
+const groupByHexIdAndSelectMostSevere = ({ hexagons }) => {
+  return hexagons.reduce((acc, hexagon) => {
+    const { hexId, sev, alt, observationTime } = hexagon;
+    if (!acc[hexId] || acc[hexId].sev < sev) {
+      acc[hexId] = { hexId, sev, alt, observationTime };
+    }
+    return acc;
+  }, {});
+};
 
 const App = ({ sdk }) => {
   const nowcastingFlow = useMemo(() => sdk.createNowcastingFlow(), [sdk]);
   const observationFlow = useMemo(() => sdk.createObservationsFlow(), [sdk]);
-
+  const adsbFlow = useMemo(() => sdk.createAdsbFlow(), [sdk]);
+  
   const [map, setMap] = useState(null);
   const [selectedForecast, setSelectedForecast] = useState(0);
   const [selectedMinSeverity, setSelectedMinSeverity] = useState(
@@ -56,23 +75,23 @@ const App = ({ sdk }) => {
 
   const {
     nowcastingData,
-    changeViewState,
+    changeViewState: changeNowcastingViewState,
     toggle: toggleNowcasting,
     isRunning: isRunningNowcasting,
-  } = useNowcastingFlow(
-    nowcastingFlow,
-    map
-  );
+  } = useNowcastingFlow(nowcastingFlow, map);
   const {
     observationFlowData,
     updateConfig,
     updateMapPolygon,
     toggle: toggleObservations,
     isRunning: isObservationsRunning,
-  } = useObservationsFlow(
-    observationFlow,
-    map
-  );
+  } = useObservationsFlow(observationFlow, map);
+  const {
+    adsbData,
+    changeViewState: changeAdsbViewState,
+    toggle: toggleAdsb,
+    isRunning: isRunningAdsb,
+  } = useAdsbFlow(adsbFlow, map);
 
   const { filteredData: filteredNowcastingData } = useNowcastingFiltering(
     nowcastingData,
@@ -83,9 +102,17 @@ const App = ({ sdk }) => {
     }
   );
 
+  const { filteredData: filteredAdsbData } = useAdsbFiltering(adsbData, {
+    selectedHoursAgo: Number(hours),
+    selectedAltitudeFrom: selectedAltitudeDebounced[0],
+    selectedAltitudeTo: selectedAltitudeDebounced[2],
+    selectedSeverity: selectedMinSeverity,
+  });
+
   const handleMapMove = CoreUtils.debounce(() => {
     updateMapPolygon();
-    changeViewState();
+    changeNowcastingViewState();
+    changeAdsbViewState();
   }, 500);
 
   useObservationsFiltering(updateConfig, {
@@ -109,9 +136,23 @@ const App = ({ sdk }) => {
     return GeoUtils.getHexagonsFeatureCollection(observationFlowData);
   }, [observationFlowData]);
 
+  const adsbFeatureCollection = useMemo(() => {
+    const hexagons = ADSB.prepareAdsbDataForMapHexagons({
+      data: filteredAdsbData,
+    });    
+    
+    const groupedAdsbData = groupByHexIdAndSelectMostSevere({ hexagons });
+
+    return GeoUtils.getHexagonsFeatureCollection(
+      Object.values(groupedAdsbData)
+    );
+    // return GeoUtils.getHexagonsFeatureCollection(hexagons);
+  }, [filteredAdsbData]);
+
   const handleAltitudeChange = useCallback((value) => {
     setSelectedAltitude(value);
     debouncedAltitudeChange(value);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -125,6 +166,12 @@ const App = ({ sdk }) => {
             ...MAP_GEOJSON_LAYER_CONFIG,
             visible: isRunningNowcasting,
             data: nowcastingFeatureCollection,
+          }),
+          new GeoJsonLayer({
+            ...MAP_OBSERVATION_CONFIG,
+            visible: isRunningAdsb,
+            data: adsbFeatureCollection,
+            id: "adsb",
           }),
           new GeoJsonLayer({
             ...MAP_OBSERVATION_CONFIG,
@@ -176,6 +223,17 @@ const App = ({ sdk }) => {
           onClick={toggleObservations}
         >
           Observations
+        </button>
+        <button
+          className={cn(
+            "px-2 py-1 bg-white rounded-md",
+            isRunningAdsb
+              ? "bg-gradient-to-b from-white to-gray-100 text-gray-950"
+              : "bg-gray-200 text-gray-400"
+          )}
+          onClick={toggleAdsb}
+        >
+          ADS-B
         </button>
       </div>
     </div>
