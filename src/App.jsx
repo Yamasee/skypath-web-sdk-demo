@@ -89,8 +89,8 @@ const App = ({ sdk }) => {
   const {
     adsbData,
     changeViewState: changeAdsbViewState,
-    toggle: toggleAdsb,
-    isRunning: isRunningAdsb,
+    // toggle: toggleAdsb,
+    // isRunning: isRunningAdsb,
   } = useAdsbFlow(adsbFlow, map);
 
   const { filteredData: filteredNowcastingData } = useNowcastingFiltering(
@@ -169,7 +169,7 @@ const App = ({ sdk }) => {
           }),
           new GeoJsonLayer({
             ...MAP_OBSERVATION_CONFIG,
-            visible: isRunningAdsb,
+            visible: false, // disable for now  replace with: isRunningAdsb
             data: adsbFeatureCollection,
             id: "adsb",
           }),
@@ -224,17 +224,17 @@ const App = ({ sdk }) => {
         >
           Observations
         </button>
-        <button
-          className={cn(
-            "px-2 py-1 bg-white rounded-md",
-            isRunningAdsb
-              ? "bg-gradient-to-b from-white to-gray-100 text-gray-950"
-              : "bg-gray-200 text-gray-400"
-          )}
-          onClick={toggleAdsb}
-        >
-          ADS-B
-        </button>
+        {/*<button*/}
+        {/*  className={cn(*/}
+        {/*    "px-2 py-1 bg-white rounded-md",*/}
+        {/*    isRunningAdsb*/}
+        {/*      ? "bg-gradient-to-b from-white to-gray-100 text-gray-950"*/}
+        {/*      : "bg-gray-200 text-gray-400"*/}
+        {/*  )}*/}
+        {/*  onClick={toggleAdsb}*/}
+        {/*>*/}
+        {/*  ADS-B*/}
+        {/*</button>*/}
       </div>
     </div>
   );
