@@ -88,6 +88,9 @@ const MAP_OBSERVATION_CONFIG = {
   billboard: true,
   sizeMinPixels: 0.1,
   sizeMaxPixels: 1.5,
+  stroked: true,
+  lineWidthMinPixels: 1,
+  getLineColor: () => [0, 0, 0, 50],
   getPolygonOffset: () => [0, 0],
   getFillColor: (d) => {
     const severityColorMap = {

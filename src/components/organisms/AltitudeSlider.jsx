@@ -7,7 +7,7 @@ const MAJOR_PERIOD = 10;
 const NUMBER_OF_DIVISIONS = 51;
 
 const DivisionLabel = ({ value }) => (
-  <div className="text-[11px] font-medium absolute left-5 -top-1.5">
+  <div className="text-[11px] font-medium absolute left-5 -top-1.5 text-white">
     {value}
   </div>
 );
@@ -19,7 +19,7 @@ const AltitudeSlider = forwardRef(
       className={cn("flex-col h-full justify-center my-1.5", className)}
       {...props}
     >
-      <Track className="flex-col items-center w-1.5 bg-slate-800 py-0.5">
+      <Track className="flex-col items-center w-1.5 bg-slate-500 py-0.5">
         {Array.from({ length: NUMBER_OF_DIVISIONS })
           .map((_, index) => {
             const isMajor = index % MAJOR_PERIOD === 0;
@@ -30,7 +30,7 @@ const AltitudeSlider = forwardRef(
                 className={cn(`
                   text-xs
                   -translate-x-1/2
-                  bg-slate-800
+                  bg-slate-500
                   rounded-sm`,
                   className
                 )}

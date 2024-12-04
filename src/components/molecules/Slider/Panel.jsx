@@ -3,16 +3,20 @@ import { cn } from "../../../lib/style-utils";
 
 const panel = cva([
   "w-[450px]",
-  "bg-slate-800",
+  "bg-slate-500/30",
   "flex flex-col",
   "items-center",
   "justify-start",
-  "pt-8",
+  "pt-5",
   "rounded-lg",
-  "h-24",
+  "h-[80px]",
   "px-9",
-  "text-sky-100",
+  "text-white",
   "shadow-light",
+  "backdrop-blur-md",
+  "border",
+  "border-slate-400",
+  "border-opacity-30",
 ]);
 
 const Panel = ({

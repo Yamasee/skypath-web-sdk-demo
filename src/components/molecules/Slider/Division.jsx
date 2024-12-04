@@ -8,7 +8,8 @@ const division = cva([
   "flex-row",
   "justify-evenly",
   "items-center",
-  "text-sm",
+  "text-xs",
+  "text-nowrap",
 ]);
 
 const divisionLabel = cva([

@@ -12,7 +12,7 @@ const range = cva([
   "relative",
   "h-1.5",
   "w-full",
-  "bg-gray-600",
+  "bg-slate-500",
   "grow",
   "rounded-full",
   "pointer-events-none",
