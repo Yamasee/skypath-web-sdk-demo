@@ -19,7 +19,6 @@ import {
 } from "./config";
 // SkyPath SDK
 import {
-  ADSB,
   CoreUtils,
   GeoUtils,
   Nowcasting,
@@ -100,7 +99,7 @@ const App = ({ sdk }) => {
     }
   );
   const observationsFeatureCollection = useMemo(() => {
-    const hexagons = ADSB.prepareAdsbDataForMapHexagons({
+    const hexagons = GeoUtils.prepareHexagonsDataForMapHexagons({
       data: filteredObservationsData,
     });
 
@@ -131,7 +130,7 @@ const App = ({ sdk }) => {
   //   }
   // );
   // const adsbFeatureCollection = useMemo(() => {
-  //   const hexagons = ADSB.prepareAdsbDataForMapHexagons({
+  //   const hexagons = GeoUtils.prepareHexagonsDataForMapHexagons({
   //     data: filteredAdsbData,
   //   });
 
@@ -187,12 +186,7 @@ const App = ({ sdk }) => {
       polygon,
       aircraftCategory,
     });
-  }, [
-    mapIsReady,
-    map,
-    updateObservationsConfig,
-    aircraftCategory,
-  ]);
+  }, [mapIsReady, map, updateObservationsConfig, aircraftCategory]);
 
   return (
     <div className="relative w-screen h-screen overflow-hidden">

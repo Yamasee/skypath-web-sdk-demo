@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ADSB } from "@yamasee/skypath-sdk-web";
+import { GeoUtils } from "@yamasee/skypath-sdk-web";
 
 /**
  * Hook to filter adsb data based on selected filters
@@ -23,7 +23,7 @@ export const useAdsbFiltering = (data, filters) => {
       altitudeTo: selectedAltitudeTo,
       severity: selectedSeverity,
     };
-    return ADSB.getAdsbDataSlice({ data, filters });
+    return GeoUtils.getHexagonsDataSlice({ data, filters });
   }, [data, selectedHoursAgo, selectedAltitudeFrom, selectedAltitudeTo, selectedSeverity]);
 
   return { filteredData };

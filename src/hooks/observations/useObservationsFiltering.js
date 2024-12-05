@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-// TODO: Use observations
-import { ADSB } from "@yamasee/skypath-sdk-web";
+import { GeoUtils } from "@yamasee/skypath-sdk-web";
 
 /**
  * Hook to filter observations data based on selected filters
@@ -24,8 +23,7 @@ export const useObservationsFiltering = (data, filters) => {
       altitudeTo: selectedAltitudeTo,
       severity: selectedSeverity,
     };
-    // TODO: Use observations
-    return ADSB.getAdsbDataSlice({ data, filters });
+    return GeoUtils.getHexagonsDataSlice({ data, filters });
   }, [data, selectedHoursAgo, selectedAltitudeFrom, selectedAltitudeTo, selectedSeverity]);
 
   return { filteredData };
