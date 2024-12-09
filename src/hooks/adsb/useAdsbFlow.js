@@ -9,6 +9,8 @@ const updateHexIds = CoreUtils.debounce((map, onResult) => {
   onResult(hexIds);
 }, DEFAULT_DEBOUNCE_TIME);
 
+// TODO: get rid of map; pass polygons
+
 /**
  * Custom hook to handle the ADSB flow
  *
@@ -60,7 +62,7 @@ export const useAdsbFlow = (adsbFlow, map) => {
   }, [adsbFlow]);
 
   return {
-    adsbData,
+    data: adsbData,
     changeViewState,
     toggle,
     isRunning,

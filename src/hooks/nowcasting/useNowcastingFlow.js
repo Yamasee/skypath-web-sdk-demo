@@ -9,6 +9,8 @@ const updateHexIds = CoreUtils.debounce((map, onResult) => {
   onResult(hexIds);
 }, DEFAULT_DEBOUNCE_TIME);
 
+// TODO: get rid of map; pass polygons
+
 /**
  * Custom hook to handle the nowcasting flow
  * 

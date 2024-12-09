@@ -10,7 +10,7 @@ import Dropdown from "../atoms/Dropdown";
 
 const BottomPanelsContainer = ({ children }) => {
   return (
-    <div className="absolute flex flex-row flex-wrap items-center justify-center w-full gap-5 -translate-x-1/2 bottom-5 left-1/2">
+    <div className="absolute flex flex-row flex-wrap items-center justify-center w-full gap-5 -translate-x-1/2 bottom-12 left-1/2">
       {children}
     </div>
   );
@@ -48,6 +48,9 @@ const MapControls = ({
         shadow-light
         rounded-xl
         backdrop-blur-md
+        border
+      border-slate-400
+        border-opacity-30
         flex
         flex-col
         gap-1.5
