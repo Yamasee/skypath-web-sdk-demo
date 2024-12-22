@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from "react";
  */
 export const useObservationsFlow = (observationsFlow) => {
   const [observationsData, setObservationsData] = useState();
-  const [isRunning, setIsRunning] = useState(() => observationsFlow.getState() === "running");
+  const [isRunning, setIsRunning] = useState(() => observationsFlow.isRunning);
 
   useEffect(() => {
     if (!observationsFlow) return;
@@ -15,21 +15,20 @@ export const useObservationsFlow = (observationsFlow) => {
     observationsFlow.onData((data) => setObservationsData(data));
     observationsFlow.start();
 
-    const _isRunning = observationsFlow.getState() === "running";
-    setIsRunning(_isRunning);
+    setIsRunning(observationsFlow.isRunning);
 
     // Cleanup
     return () => observationsFlow.terminate();
   }, [observationsFlow]);
 
   const toggle = useCallback(() => {
-    if (observationsFlow.getState() === "running") {
+    if (observationsFlow.isRunning) {
       setObservationsData(null);
       observationsFlow.stop();
     } else {
       observationsFlow.start();
     }
-    setIsRunning(observationsFlow.getState() === "running");
+    setIsRunning(observationsFlow.isRunning);
   }, [observationsFlow]);
 
   return {

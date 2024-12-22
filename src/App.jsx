@@ -33,6 +33,19 @@ import { groupByHexIdAndSelectMostSevere } from "./lib/general-utils";
 // import { useAdsbFlow } from "./hooks/adsb/useAdsbFlow";
 // import { useAdsbFiltering } from "./hooks/adsb/useAdsbFiltering";
 
+  // Equator Line GeoJSON
+  const EQUATOR_GEOJSON = {
+    type: "Feature",
+    geometry: {
+      type: "LineString",
+      coordinates: [
+        [-180, 0],
+        [180, 0],
+      ],
+    },
+    properties: {},
+  };
+
 const App = ({ sdk }) => {
   // MAP
   const [map, setMap] = useState(null);
@@ -195,6 +208,15 @@ const App = ({ sdk }) => {
         onViewStateChange={handleMapMove}
         controller
         layers={[
+          new GeoJsonLayer({
+            id: "equator-layer",
+            data: EQUATOR_GEOJSON,
+            stroked: true,
+            filled: false,
+            getLineColor: [255, 255, 255, 50],
+            lineWidthMinPixels: 1,
+            getLineWidth: 2,
+          }),
           new GeoJsonLayer({
             ...MAP_GEOJSON_LAYER_CONFIG,
             visible: isRunningNowcasting,

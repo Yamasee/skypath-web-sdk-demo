@@ -8,7 +8,7 @@ const INITIAL_MAP_VIEW_STATE = {
   latitude: 35,
   zoom: 4.5,
   maxZoom: 5,
-  minZoom: 3.5,
+  minZoom: 2.5,
 };
 
 const ALTITUDE_SLIDER_INITIAL_VALUE = [
@@ -40,7 +40,7 @@ const AIRCRAFT_CATEGORY_OPTIONS = [
 ]
 
 const HOURS_OPTIONS = [
-  { value: Observations.availableConfigInputs.hours.halfAnHour, label: '0.5h' },
+  { value: Observations.availableConfigInputs.hours.halfAnHour, label: '1/2h' },
   { value: Observations.availableConfigInputs.hours.oneHour, label: '1h' },
   { value: Observations.availableConfigInputs.hours.twoHours, label: '2h' },
   { value: Observations.availableConfigInputs.hours.threeHours, label: '3h' },

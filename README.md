@@ -37,6 +37,10 @@ npm run dev
 
 The application should now be running on `http://localhost:5173`. Open this URL in your browser to view the demo.
 
+### Deployed Version
+
+You can also view the deployed version of the demo [here](https://yamasee.github.io/skypath-web-sdk-demo/).
+
 ### Troubleshooting 🆘
 
 If you encounter any issues during the setup or have questions, please refer to the main SDK documentation or contact the SkyPath support team for assistance.
