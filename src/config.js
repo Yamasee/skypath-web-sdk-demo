@@ -7,8 +7,8 @@ const INITIAL_MAP_VIEW_STATE = {
   longitude: -85,
   latitude: 35,
   zoom: 4.5,
-  maxZoom: 5,
-  minZoom: 2.5,
+  // maxZoom: 5,
+  // minZoom: 2.5,
 };
 
 const ALTITUDE_SLIDER_INITIAL_VALUE = [
