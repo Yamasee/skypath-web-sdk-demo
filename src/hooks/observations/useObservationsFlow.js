@@ -31,10 +31,17 @@ export const useObservationsFlow = (observationsFlow) => {
     setIsRunning(observationsFlow.isRunning);
   }, [observationsFlow]);
 
+  const toggleLargePolygonHandlingMode = useCallback(({ mode }) => {
+    observationsFlow.updateConfig({
+      largePolygonHandlingBehavior: mode,
+    });
+  }, [observationsFlow]);
+
   return {
     data: observationsData,
     updateConfig: observationsFlow.updateConfig,
     toggle,
     isRunning,
+    toggleLargePolygonHandlingMode,
   };
 };

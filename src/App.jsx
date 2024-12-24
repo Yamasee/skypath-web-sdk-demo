@@ -33,6 +33,8 @@ import { groupByHexIdAndSelectMostSevere } from "./lib/general-utils";
 // import { useAdsbFlow } from "./hooks/adsb/useAdsbFlow";
 // import { useAdsbFiltering } from "./hooks/adsb/useAdsbFiltering";
 
+const largePolygonHandlingModes = Object.values(Observations.availableConfigInputs.largePolygonHandlingBehavior);
+
   // Equator Line GeoJSON
   const EQUATOR_GEOJSON = {
     type: "Feature",
@@ -101,6 +103,7 @@ const App = ({ sdk }) => {
     updateConfig: updateObservationsConfig,
     toggle: toggleObservations,
     isRunning: isRunningObservations,
+    toggleLargePolygonHandlingMode: toggleObservationsLargePolygonHandlingMode,
   } = useObservationsFlow(observationsFlow);
   const { filteredData: filteredObservationsData } = useObservationsFiltering(
     observationsData,
@@ -124,6 +127,12 @@ const App = ({ sdk }) => {
       Object.values(groupedObservationsData)
     );
   }, [filteredObservationsData]);
+  const [useObservationsLargePolygonMode, setUseObservationsLargePolygonMode] = useState(0);
+  useEffect(() => {
+    toggleObservationsLargePolygonHandlingMode({
+      mode: largePolygonHandlingModes[useObservationsLargePolygonMode],
+    });
+  }, [useObservationsLargePolygonMode, toggleObservationsLargePolygonHandlingMode]);
 
   // ADSB
   // const adsbFlow = useMemo(() => sdk.createAdsbFlow(), [sdk]);
@@ -281,6 +290,20 @@ const App = ({ sdk }) => {
           onClick={toggleObservations}
         >
           Observations
+        </button>
+      </div>
+      {/* Observations large polygon handling */}
+      <div className="absolute z-10 flex flex-col gap-1 p-2 top-[5.5em] right-2 w-[9em]">
+        <button
+          className={cn(
+            "px-2 py-1 rounded-md truncate",
+            isRunningObservations
+              ? "bg-gradient-to-b from-white to-gray-100 text-gray-950"
+              : "bg-gray-200 text-gray-400"
+          )}
+          onClick={() => setUseObservationsLargePolygonMode((useObservationsLargePolygonMode + 1) % largePolygonHandlingModes.length)}
+        >
+          Mode: <br/> {largePolygonHandlingModes[useObservationsLargePolygonMode]}
         </button>
       </div>
       {/* ADSB */}
