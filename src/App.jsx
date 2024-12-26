@@ -179,12 +179,7 @@ const App = ({ sdk }) => {
     debouncedSetSelectedAltitude(value);
   };
   const handleSetAircraftCategory = (value) => {
-    const polygon = GeoUtils.getMapPolygon(map);
     setAircraftCategory(value);
-    updateObservationsConfig({
-      polygon,
-      aircraftCategory: value,
-    });
   };
 
   const handleMapMove = CoreUtils.debounce(() => {
