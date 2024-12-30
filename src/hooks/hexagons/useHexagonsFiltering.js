@@ -2,12 +2,12 @@ import { useMemo } from "react";
 import { GeoUtils } from "@yamasee/skypath-sdk-web";
 
 /**
- * Hook to filter adsb data based on selected filters
- * @param {Array} data - ADSB data
+ * Hook to filter hexagons data based on selected filters
+ * @param {Array} data - Hexagons data
  * @param {Object} filters - Filters object
  * @returns {Object} - Filtered data
  */
-export const useAdsbFiltering = (data, filters) => {
+export const useHexagonsFiltering = (data, filters) => {
   const {
     selectedHoursAgo,
     selectedAltitudeFrom,

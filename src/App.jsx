@@ -27,11 +27,9 @@ import {
 // Features
 import { useNowcastingFlow } from "./hooks/nowcasting/useNowcastingFlow";
 import { useNowcastingFiltering } from "./hooks/nowcasting/useNowcastingFiltering";
-import { useObservationsFlow } from "./hooks/observations/useObservationsFlow";
-import { useObservationsFiltering } from "./hooks/observations/useObservationsFiltering";
 import { groupByHexIdAndSelectMostSevere } from "./lib/general-utils";
-// import { useAdsbFlow } from "./hooks/adsb/useAdsbFlow";
-// import { useAdsbFiltering } from "./hooks/adsb/useAdsbFiltering";
+import { useHexagonsFlow } from "./hooks/hexagons/useHexagonsFlow";
+import { useHexagonsFiltering } from "./hooks/hexagons/useHexagonsFiltering";
 
 const largePolygonHandlingModes = Object.values(Observations.availableConfigInputs.largePolygonHandlingBehavior);
 
@@ -104,8 +102,8 @@ const App = ({ sdk }) => {
     toggle: toggleObservations,
     isRunning: isRunningObservations,
     toggleLargePolygonHandlingMode: toggleObservationsLargePolygonHandlingMode,
-  } = useObservationsFlow(observationsFlow);
-  const { filteredData: filteredObservationsData } = useObservationsFiltering(
+  } = useHexagonsFlow(observationsFlow);
+  const { filteredData: filteredObservationsData } = useHexagonsFiltering(
     observationsData,
     {
       selectedHoursAgo: Number(hours),
@@ -128,43 +126,48 @@ const App = ({ sdk }) => {
     );
   }, [filteredObservationsData]);
   const [useObservationsLargePolygonMode, setUseObservationsLargePolygonMode] = useState(0);
+
+  // ADSB
+  const adsbFlow = useMemo(() => sdk.createAdsbFlow(), [sdk]);
+  const {
+    data: adsbData,
+    updateConfig: updateAdsbConfig,
+    toggle: toggleAdsb,
+    isRunning: isRunningAdsb,
+    toggleLargePolygonHandlingMode: toggleAdsbLargePolygonHandlingMode,
+  } = useHexagonsFlow(adsbFlow);
+  const { filteredData: filteredAdsbData } = useHexagonsFiltering(
+    adsbData,
+    {
+      selectedHoursAgo: Number(hours),
+      selectedAltitudeFrom: selectedAltitudeDebounced[0],
+      selectedAltitudeTo: selectedAltitudeDebounced[2],
+      selectedSeverity: selectedMinSeverity,
+    }
+  );
+  const adsbFeatureCollection = useMemo(() => {
+    const hexagons = GeoUtils.prepareHexagonsDataForMapHexagons({
+      data: filteredAdsbData,
+    });
+
+    const groupedAdsbData = groupByHexIdAndSelectMostSevere({
+      hexagons,
+    });
+
+    return GeoUtils.getHexagonsFeatureCollection(
+      Object.values(groupedAdsbData)
+    );
+    // return GeoUtils.getHexagonsFeatureCollection(hexagons);
+  }, [filteredAdsbData]);
+
   useEffect(() => {
     toggleObservationsLargePolygonHandlingMode({
       mode: largePolygonHandlingModes[useObservationsLargePolygonMode],
     });
-  }, [useObservationsLargePolygonMode, toggleObservationsLargePolygonHandlingMode]);
-
-  // ADSB
-  // const adsbFlow = useMemo(() => sdk.createAdsbFlow(), [sdk]);
-  // const {
-  //   data: adsbData,
-  //   changeViewState: changeAdsbViewState,
-  //   toggle: toggleAdsb,
-  //   isRunning: isRunningAdsb,
-  // } = useAdsbFlow(adsbFlow, map);
-  // const { filteredData: filteredAdsbData } = useAdsbFiltering(
-  //   adsbData,
-  //   {
-  //     selectedHoursAgo: Number(hours),
-  //     selectedAltitudeFrom: selectedAltitudeDebounced[0],
-  //     selectedAltitudeTo: selectedAltitudeDebounced[2],
-  //     selectedSeverity: selectedMinSeverity,
-  //   }
-  // );
-  // const adsbFeatureCollection = useMemo(() => {
-  //   const hexagons = GeoUtils.prepareHexagonsDataForMapHexagons({
-  //     data: filteredAdsbData,
-  //   });
-
-  //   const groupedAdsbData = groupByHexIdAndSelectMostSevere({
-  //     hexagons,
-  //   });
-
-  //   return GeoUtils.getHexagonsFeatureCollection(
-  //     Object.values(groupedAdsbData)
-  //   );
-  //   // return GeoUtils.getHexagonsFeatureCollection(hexagons);
-  // }, [filteredAdsbData]);
+    toggleAdsbLargePolygonHandlingMode({
+      mode: largePolygonHandlingModes[useObservationsLargePolygonMode],
+    });
+  }, [useObservationsLargePolygonMode, toggleObservationsLargePolygonHandlingMode, toggleAdsbLargePolygonHandlingMode]);
 
   // Handlers
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -191,8 +194,9 @@ const App = ({ sdk }) => {
       polygon,
       aircraftCategory,
     });
-
-    // changeAdsbViewState();
+    updateAdsbConfig({
+      polygon,
+    });
   }, 500);
 
   useEffect(() => {
@@ -231,11 +235,12 @@ const App = ({ sdk }) => {
             visible: isRunningObservations,
             data: observationsFeatureCollection,
           }),
-          // new GeoJsonLayer({
-          //   ...MAP_OBSERVATION_CONFIG,
-          //   visible: isRunningAdsb,
-          //   data: adsbFeatureCollection,
-          // }),
+          new GeoJsonLayer({
+            ...MAP_OBSERVATION_CONFIG,
+            id: 'adsb-layer',
+            visible: isRunningAdsb,
+            data: adsbFeatureCollection,
+          }),
         ]}
       >
         <Map
@@ -273,8 +278,22 @@ const App = ({ sdk }) => {
           Nowcasting
         </button>
       </div>
-      {/* Observations */}
+      {/* ADSB */}
       <div className="absolute z-10 flex flex-col gap-1 p-2 top-[3em] right-2 w-[9em]">
+        <button
+          className={cn(
+            "px-2 py-1 rounded-md",
+            isRunningAdsb
+              ? "bg-gradient-to-b from-white to-gray-100 text-gray-950"
+              : "bg-gray-200 text-gray-400"
+          )}
+          onClick={toggleAdsb}
+        >
+          ADSB
+        </button>
+      </div>
+      {/* Observations */}
+      <div className="absolute z-10 flex flex-col gap-1 p-2 top-[5.5em] right-2 w-[9em]">
         <button
           className={cn(
             "px-2 py-1 rounded-md",
@@ -288,7 +307,7 @@ const App = ({ sdk }) => {
         </button>
       </div>
       {/* Observations large polygon handling */}
-      <div className="absolute z-10 flex flex-col gap-1 p-2 top-[5.5em] right-2 w-[9em]">
+      <div className="absolute z-10 flex flex-col gap-1 p-2 top-[8em] right-2 w-[9em]">
         <button
           className={cn(
             "px-2 py-1 rounded-md truncate",
@@ -301,20 +320,6 @@ const App = ({ sdk }) => {
           Mode: <br/> {largePolygonHandlingModes[useObservationsLargePolygonMode]}
         </button>
       </div>
-      {/* ADSB */}
-      {/* <div className="absolute z-10 flex flex-col gap-1 p-2 top-[5.5em] right-2 w-[9em]">
-        <button
-          className={cn(
-            "px-2 py-1 rounded-md",
-            isRunningAdsb
-              ? "bg-gradient-to-b from-white to-gray-100 text-gray-950"
-              : "bg-gray-200 text-gray-400"
-          )}
-          onClick={toggleAdsb}
-        >
-          ADSB
-        </button>
-      </div> */}
     </div>
   );
 };
