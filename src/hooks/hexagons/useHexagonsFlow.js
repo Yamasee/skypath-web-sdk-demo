@@ -8,11 +8,14 @@ import { useCallback, useEffect, useState } from "react";
 export const useHexagonsFlow = (flow) => {
   const [data, setData] = useState();
   const [isRunning, setIsRunning] = useState(() => flow.isRunning);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (!flow) return;
 
-    flow.onData((data) => setData(data));
+    flow.onData((newData) => setData(newData));
+    flow.onIsProcessingChange?.((_isProcessing) => setIsProcessing(_isProcessing));
+    flow.onError?.((error) => console.error(error));
     flow.start();
 
     setIsRunning(flow.isRunning);
@@ -42,5 +45,6 @@ export const useHexagonsFlow = (flow) => {
     toggle,
     isRunning,
     toggleLargePolygonHandlingMode,
+    isProcessing,
   };
 };

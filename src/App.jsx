@@ -16,6 +16,9 @@ import {
   INITIAL_MAP_VIEW_STATE,
   MAP_GEOJSON_LAYER_CONFIG,
   MAP_OBSERVATION_CONFIG,
+  MAP_ADSB_RING_CONFIG,
+  MAP_ADSB_MIDDLE_CONFIG,
+  MAP_EQUATOR_CONFIG,
 } from "./config";
 // SkyPath SDK
 import {
@@ -32,19 +35,6 @@ import { useHexagonsFlow } from "./hooks/hexagons/useHexagonsFlow";
 import { useHexagonsFiltering } from "./hooks/hexagons/useHexagonsFiltering";
 
 const largePolygonHandlingModes = Object.values(Observations.availableConfigInputs.largePolygonHandlingBehavior);
-
-  // Equator Line GeoJSON
-  const EQUATOR_GEOJSON = {
-    type: "Feature",
-    geometry: {
-      type: "LineString",
-      coordinates: [
-        [-180, 0],
-        [180, 0],
-      ],
-    },
-    properties: {},
-  };
 
 const App = ({ sdk }) => {
   // MAP
@@ -135,6 +125,7 @@ const App = ({ sdk }) => {
     toggle: toggleAdsb,
     isRunning: isRunningAdsb,
     toggleLargePolygonHandlingMode: toggleAdsbLargePolygonHandlingMode,
+    isProcessing: isProcessingAdsb,
   } = useHexagonsFlow(adsbFlow);
   const { filteredData: filteredAdsbData } = useHexagonsFiltering(
     adsbData,
@@ -145,7 +136,7 @@ const App = ({ sdk }) => {
       selectedSeverity: selectedMinSeverity,
     }
   );
-  const adsbFeatureCollection = useMemo(() => {
+  const adsbFeatureCollections = useMemo(() => {
     const hexagons = GeoUtils.prepareHexagonsDataForMapHexagons({
       data: filteredAdsbData,
     });
@@ -154,9 +145,18 @@ const App = ({ sdk }) => {
       hexagons,
     });
 
-    return GeoUtils.getHexagonsFeatureCollection(
-      Object.values(groupedAdsbData)
+    const middleArea = GeoUtils.getHexagonsFeatureCollection(
+      Object.values(groupedAdsbData),
+      0.5,
     );
+    const ring = GeoUtils.getHexagonsFeatureCollection(
+      Object.values(groupedAdsbData),
+      1,
+    );
+    return {
+      middleArea,
+      ring,
+    }
     // return GeoUtils.getHexagonsFeatureCollection(hexagons);
   }, [filteredAdsbData]);
 
@@ -209,39 +209,50 @@ const App = ({ sdk }) => {
     });
   }, [mapIsReady, map, updateObservationsConfig, aircraftCategory]);
 
+  useEffect(() => {
+    if (!mapIsReady) return;
+    const polygon = GeoUtils.getMapPolygon(map);
+
+    updateAdsbConfig({
+      polygon,
+    });
+  }, [
+    mapIsReady, map, updateAdsbConfig
+  ]);
+
+  const layers = [
+    new GeoJsonLayer({
+      ...MAP_EQUATOR_CONFIG,
+    }),
+    new GeoJsonLayer({
+      ...MAP_OBSERVATION_CONFIG,
+      visible: isRunningObservations,
+      data: observationsFeatureCollection,
+    }),
+    new GeoJsonLayer({
+      ...MAP_ADSB_MIDDLE_CONFIG,
+      visible: isRunningAdsb,
+      data: adsbFeatureCollections.middleArea,
+    }),
+    new GeoJsonLayer({
+      ...MAP_ADSB_RING_CONFIG,
+      visible: isRunningAdsb,
+      data: adsbFeatureCollections.ring,
+    }),
+    new GeoJsonLayer({
+      ...MAP_GEOJSON_LAYER_CONFIG,
+      visible: isRunningNowcasting,
+      data: nowcastingFeatureCollection,
+    }),
+  ]
+
   return (
-    <div className="relative w-screen h-screen overflow-hidden">
+    <div className={cn("relative w-screen h-screen overflow-hidden border-4 border-[#191a1a]", isProcessingAdsb && 'border-red-500')}>
       <DeckGL
         initialViewState={INITIAL_MAP_VIEW_STATE}
         onViewStateChange={handleMapMove}
         controller
-        layers={[
-          new GeoJsonLayer({
-            id: "equator-layer",
-            data: EQUATOR_GEOJSON,
-            stroked: true,
-            filled: false,
-            getLineColor: [255, 255, 255, 50],
-            lineWidthMinPixels: 1,
-            getLineWidth: 2,
-          }),
-          new GeoJsonLayer({
-            ...MAP_GEOJSON_LAYER_CONFIG,
-            visible: isRunningNowcasting,
-            data: nowcastingFeatureCollection,
-          }),
-          new GeoJsonLayer({
-            ...MAP_OBSERVATION_CONFIG,
-            visible: isRunningObservations,
-            data: observationsFeatureCollection,
-          }),
-          new GeoJsonLayer({
-            ...MAP_OBSERVATION_CONFIG,
-            id: 'adsb-layer',
-            visible: isRunningAdsb,
-            data: adsbFeatureCollection,
-          }),
-        ]}
+        layers={layers}
       >
         <Map
           onLoad={handleLoadMap}

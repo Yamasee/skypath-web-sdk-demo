@@ -27,11 +27,15 @@ const ERROR_MESSAGES = {
 
 const SDK_VERSION = pkg.dependencies["@yamasee/skypath-sdk-web"]?.replace("^", "") || "N/A";
 
+const AUTH_KEY = "sdk-auth";
+const restoreAuth = () => localStorage.getItem("sdk-auth") ? JSON.parse(localStorage.getItem(AUTH_KEY)) : INITIAL_FROM_VALUES;
+const preserveAuth = (authData) => localStorage.setItem(AUTH_KEY, JSON.stringify(authData));
+
 const AuthWrapper = ({ children }) => {
   const [SDK, setSDK] = useState();
   const [authOption, setAuthOption] = useState(null);
   const [error, setError] = useState(null);
-  const [authData, setAuthData] = useState({ ...INITIAL_FROM_VALUES });
+  const [authData, setAuthData] = useState(restoreAuth);
 
   const handleSubmit = () => {
     const { apiBaseUrl, apiKey, userId, companyName, signedJwt, partnerId } =
@@ -73,6 +77,7 @@ const AuthWrapper = ({ children }) => {
       .then((_sdk) => {
         setSDK(_sdk);
         setError(null);
+        preserveAuth(authData);
       })
       .catch((error) => {
         setSDK(null);
