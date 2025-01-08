@@ -6,7 +6,7 @@ import { TextInput } from "./components/atoms/TextInput";
 import pkg from "../package.json";
 
 const INITIAL_FROM_VALUES = {
-  apiBaseUrl: "",
+  proxyUrl: "",
   apiKey: "",
   userId: "",
   companyName: "",
@@ -38,13 +38,8 @@ const AuthWrapper = ({ children }) => {
   const [authData, setAuthData] = useState(restoreAuth);
 
   const handleSubmit = () => {
-    const { apiBaseUrl, apiKey, userId, companyName, signedJwt, partnerId } =
+    const { proxyUrl, apiKey, userId, companyName, signedJwt, partnerId } =
       authData;
-
-    if (!apiBaseUrl) {
-      setError({ message: ERROR_MESSAGES.BASE_URL });
-      return;
-    }
 
     let authParams = {};
 
@@ -71,7 +66,7 @@ const AuthWrapper = ({ children }) => {
     }
 
     createSkyPathSDK({
-      apiBaseUrl,
+      proxyUrl,
       ...authParams,
     })
       .then((_sdk) => {
@@ -144,13 +139,6 @@ const AuthWrapper = ({ children }) => {
           <div className="space-y-6">
             <div className="relative -space-y-px rounded-md shadow-sm">
               <TextInput
-                name="apiBaseUrl"
-                type="text"
-                value={authData.apiBaseUrl}
-                onChange={handleInputChange}
-                placeholder="Base URL"
-              />
-              <TextInput
                 name="apiKey"
                 type="text"
                 value={authData.apiKey}
@@ -170,6 +158,13 @@ const AuthWrapper = ({ children }) => {
                 value={authData.companyName}
                 onChange={handleInputChange}
                 placeholder="Company name"
+              />
+              <TextInput
+                name="proxyUrl"
+                type="text"
+                value={authData.proxyUrl}
+                onChange={handleInputChange}
+                placeholder="Proxy URL (Optional)"
               />
             </div>
             {error?.message && (
@@ -196,13 +191,6 @@ const AuthWrapper = ({ children }) => {
           <div className="space-y-6">
             <div className="relative -space-y-px rounded-md shadow-sm">
               <TextInput
-                name="apiBaseUrl"
-                type="text"
-                value={authData.apiBaseUrl}
-                onChange={handleInputChange}
-                placeholder="Base URL"
-              />
-              <TextInput
                 name="signedJwt"
                 type="text"
                 value={authData.signedJwt}
@@ -215,6 +203,13 @@ const AuthWrapper = ({ children }) => {
                 value={authData.partnerId}
                 onChange={handleInputChange}
                 placeholder="Partner ID"
+              />
+              <TextInput
+                name="proxyUrl"
+                type="text"
+                value={authData.proxyUrl}
+                onChange={handleInputChange}
+                placeholder="Proxy URL (Optional)"
               />
             </div>
             {error?.message && (

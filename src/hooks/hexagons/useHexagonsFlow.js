@@ -33,18 +33,11 @@ export const useHexagonsFlow = (flow) => {
     setIsRunning(flow.isRunning);
   }, [flow]);
 
-  const toggleLargePolygonHandlingMode = useCallback(({ mode }) => {
-    flow.updateConfig({
-      largePolygonHandlingBehavior: mode,
-    });
-  }, [flow]);
-
   return {
     data,
     updateConfig: flow.updateConfig,
     toggle,
     isRunning,
-    toggleLargePolygonHandlingMode,
     isProcessing,
   };
 };
