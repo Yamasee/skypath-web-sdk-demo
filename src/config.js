@@ -82,7 +82,7 @@ const MAP_GEOJSON_LAYER_CONFIG = {
 
 const MAP_OBSERVATION_CONFIG = {
   id: "observation",
-  xtruded: false,
+  extruded: false,
   filled: true,
   getElevation: 1000,
   billboard: true,
@@ -90,7 +90,7 @@ const MAP_OBSERVATION_CONFIG = {
   sizeMaxPixels: 1.5,
   stroked: true,
   lineWidthMinPixels: 1,
-  getLineColor: () => [0, 0, 0, 50],
+  getLineColor: () => [100, 100, 100, 100],
   getPolygonOffset: () => [0, 0],
   getFillColor: (d) => {
     const severityColorMap = {
@@ -105,6 +105,64 @@ const MAP_OBSERVATION_CONFIG = {
   },
   pickable: true,
   autoHighlight: true,
+};
+const MAP_EQUATOR_CONFIG = {
+  id: "equator-layer",
+  stroked: true,
+  filled: false,
+  getLineColor: [255, 255, 255, 50],
+  lineWidthMinPixels: 1,
+  getLineWidth: 2,
+  data: {
+    type: "Feature",
+    geometry: {
+      type: "LineString",
+      coordinates: [
+        [-180, 0],
+        [180, 0],
+      ],
+    },
+    properties: {},
+  },
+};
+const MAP_ADSB_MIDDLE_CONFIG = {
+  id: 'adsb-layer-middle',
+  extruded: false,
+  filled: true,
+  getElevation: 1000,
+  billboard: true,
+  sizeMinPixels: 0.1,
+  sizeMaxPixels: 1.5,
+  stroked: true,
+  lineWidthMinPixels: 1,
+  getLineColor: () => [100, 100, 100, 100],
+  getPolygonOffset: () => [0, 0],
+  getFillColor: (d) => {
+    const severityColorMap = {
+      0: [255, 250, 250, 100],
+      1: [255, 234, 0, 200],
+      2: [255, 193, 50, 200],
+      3: [255, 146, 16, 200],
+      4: [248, 70, 14, 200],
+      5: [248, 70, 14, 200],
+    };
+    return severityColorMap[d.properties.sev];
+  },
+  pickable: true,
+  autoHighlight: true,
+};
+const MAP_ADSB_RING_CONFIG = {
+  id: "adsb-layer-ring",
+  extruded: false,
+  filled: false,
+  getElevation: 1000,
+  billboard: true,
+  sizeMinPixels: 0.1,
+  sizeMaxPixels: 1.5,
+  stroked: true,
+  lineWidthMinPixels: 1,
+  getLineColor: () => [100, 100, 100, 100],
+  getPolygonOffset: () => [0, 0],
 };
 const MAP_H3_LAYER_CONFIG = {
   id: "h3-layer",
@@ -143,4 +201,7 @@ export {
   HOURS_OPTIONS,
   SEVERITY_OPTIONS,
   AIRCRAFT_CATEGORY_OPTIONS,
+  MAP_ADSB_RING_CONFIG,
+  MAP_ADSB_MIDDLE_CONFIG,
+  MAP_EQUATOR_CONFIG,
 };
