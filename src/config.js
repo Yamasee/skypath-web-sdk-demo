@@ -106,6 +106,34 @@ const MAP_OBSERVATION_CONFIG = {
   pickable: true,
   autoHighlight: true,
 };
+const MAP_ONELAYER_CONFIG = {
+  id: 'oneLayer',
+  extruded: false,
+  filled: true,
+  getElevation: 1000,
+  billboard: true,
+  sizeMinPixels: 0.1,
+  sizeMaxPixels: 1.5,
+  getFillColor: (d) => {
+    const severityColorMap = {
+      0: [255, 250, 250, 100],
+      1: [255, 234, 0, 200],
+      2: [255, 193, 50, 200],
+      3: [255, 146, 16, 200],
+      4: [248, 70, 14, 200],
+      5: [248, 70, 14, 200],
+    };
+    return severityColorMap[d.properties.sev];
+  },
+  stroked: true,
+  getLineColor: [128, 128, 128, 128],
+  lineWidthScale: 2,
+  getLineWidth: 200,
+  lineWidthUnits: 'meters',
+  pickable: true,
+  autoHighlight: true,
+  highlightColor: [173, 224, 244, 220],
+};
 const MAP_EQUATOR_CONFIG = {
   id: "equator-layer",
   stroked: true,
@@ -194,6 +222,7 @@ export {
   INITIAL_MAP_STYLE,
   MAP_GEOJSON_LAYER_CONFIG,
   MAP_OBSERVATION_CONFIG,
+  MAP_ONELAYER_CONFIG,
   MAP_H3_LAYER_CONFIG,
   DEFAULT_DEBOUNCE_TIME,
   ALTITUDE_SLIDER_CONFIG,
