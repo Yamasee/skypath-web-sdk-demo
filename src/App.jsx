@@ -33,6 +33,7 @@ import { useNowcastingFiltering } from "./hooks/nowcasting/useNowcastingFilterin
 import { groupByHexIdAndSelectMostSevere } from "./lib/general-utils";
 import { useHexagonsFlow } from "./hooks/hexagons/useHexagonsFlow";
 import { useHexagonsFiltering } from "./hooks/hexagons/useHexagonsFiltering";
+import useOneLayerFlow from "./hooks/oneLayer/useOneLayerFlow";
 
 const App = ({ sdk }) => {
   // MAP
@@ -58,6 +59,21 @@ const App = ({ sdk }) => {
   );
   const [bottomAlt, nowcastingAlt, topAlt] = selectedAltitude;
   const [, nowcastingAltDebounced] = selectedAltitudeDebounced;
+
+  // OneLayer
+  const {
+    layer: oneLayer,
+    toggle: toggleOneLayer,
+    isProcessing: isOneLayerLoading,
+    isRunning: isOneLayerRunning
+  } = useOneLayerFlow({sdk ,map, mapIsReady, options: {
+    selectedMinSeverity,
+    hours,
+    selectedAltitudeDebounced,
+    nowcastingAlt,
+    aircraftCategory,
+    selectedForecast,
+  }});
 
   // Nowcasting
   const nowcastingFlow = useMemo(() => sdk.createNowcastingFlow(), [sdk]);
@@ -230,10 +246,13 @@ const App = ({ sdk }) => {
       visible: isRunningNowcasting,
       data: nowcastingFeatureCollection,
     }),
+    oneLayer,
   ]
 
+  const isLoadingLayers = isProcessingAdsb || isOneLayerLoading;
+
   return (
-    <div className={cn("relative w-screen h-screen overflow-hidden border-4 border-[#191a1a]", isProcessingAdsb && 'border-red-500')}>
+    <div className={cn("relative w-screen h-screen overflow-hidden border-4 border-[#191a1a]", isLoadingLayers && 'border-red-500')}>
       <DeckGL
         initialViewState={INITIAL_MAP_VIEW_STATE}
         onViewStateChange={handleMapMove}
@@ -301,6 +320,20 @@ const App = ({ sdk }) => {
           onClick={toggleObservations}
         >
           Observations
+        </button>
+      </div>
+      {/* OneLayer */}
+      <div className="absolute z-10 flex flex-col gap-1 p-2 top-[8em] right-2 w-[9em]">
+        <button
+          className={cn(
+            "px-2 py-1 rounded-md",
+            isOneLayerRunning
+              ? "bg-gradient-to-b from-white to-gray-100 text-gray-950"
+              : "bg-gray-200 text-gray-400"
+          )}
+          onClick={toggleOneLayer}
+        >
+          OneLayer
         </button>
       </div>
     </div>
