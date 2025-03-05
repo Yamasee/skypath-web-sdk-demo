@@ -1,4 +1,4 @@
-import { Observations } from "@yamasee/skypath-sdk-web";
+import { Observations } from "@skypath-io/web-sdk";
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoieWFtYXNlZWluYyIsImEiOiJjbGxhdW82YTUwMWFkM2hxdW93NHF4cmVzIn0.c_NnlJUyYSz2lXUBWzDiJQ';
 

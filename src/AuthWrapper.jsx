@@ -1,5 +1,5 @@
 import { useState } from "react";
-import createSkyPathSDK from "@yamasee/skypath-sdk-web";
+import createSkyPathSDK from "@skypath-io/web-sdk";
 import icon from "../public/favicon.ico";
 import { Button } from "./components/atoms/Button";
 import { TextInput } from "./components/atoms/TextInput";
@@ -25,7 +25,7 @@ const ERROR_MESSAGES = {
   SIGNED_JWT: "Missing required fields",
 };
 
-const SDK_VERSION = pkg.dependencies["@yamasee/skypath-sdk-web"]?.replace("^", "") || "N/A";
+const SDK_VERSION = pkg.dependencies["@skypath-io/web-sdk"]?.replace("^", "") || "N/A";
 
 const AUTH_KEY = "sdk-auth";
 const restoreAuth = () => localStorage.getItem("sdk-auth") ? JSON.parse(localStorage.getItem(AUTH_KEY)) : INITIAL_FROM_VALUES;
