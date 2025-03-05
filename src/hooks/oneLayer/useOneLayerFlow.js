@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { GeoJsonLayer } from "deck.gl";
 import { useMemo, useEffect } from "react";
-import {GeoUtils} from "@yamasee/skypath-sdk-web";
+import {GeoUtils} from "@skypath-io/web-sdk";
 import {MAP_ONELAYER_CONFIG} from "../../config.js";
 import {useOneLayerFiltering} from "./useOneLayerFiltering";
 import { useHexagonsFlow } from "../hexagons/useHexagonsFlow";

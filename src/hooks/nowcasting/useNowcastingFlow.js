@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { CoreUtils, GeoUtils } from "@yamasee/skypath-sdk-web";
+import { CoreUtils, GeoUtils } from "@skypath-io/web-sdk";
 import { DEFAULT_DEBOUNCE_TIME } from "../../config";
 import {checkMapIsReady} from "../../lib/general-utils";
 

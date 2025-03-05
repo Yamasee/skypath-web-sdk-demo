@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Nowcasting } from "@yamasee/skypath-sdk-web";
+import { Nowcasting } from "@skypath-io/web-sdk";
 
 /**
  * Hook to filter nowcasting data based on selected filters

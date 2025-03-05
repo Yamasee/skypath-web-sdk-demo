@@ -26,7 +26,7 @@ import {
   GeoUtils,
   Nowcasting,
   Observations,
-} from "@yamasee/skypath-sdk-web";
+} from "@skypath-io/web-sdk";
 // Features
 import { useNowcastingFlow } from "./hooks/nowcasting/useNowcastingFlow";
 import { useNowcastingFiltering } from "./hooks/nowcasting/useNowcastingFiltering";

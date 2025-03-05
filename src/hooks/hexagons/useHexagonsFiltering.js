@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { GeoUtils } from "@yamasee/skypath-sdk-web";
+import { GeoUtils } from "@skypath-io/web-sdk";
 
 /**
  * Hook to filter hexagons data based on selected filters
