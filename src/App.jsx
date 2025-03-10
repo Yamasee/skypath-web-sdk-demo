@@ -106,28 +106,7 @@ const App = ({ sdk }) => {
     toggle: toggleObservations,
     isRunning: isRunningObservations,
   } = useHexagonsFlow(observationsFlow);
-  const { filteredData: filteredObservationsData } = useHexagonsFiltering(
-    observationsData,
-    {
-      selectedHoursAgo: Number(hours),
-      selectedAltitudeFrom: selectedAltitudeDebounced[0],
-      selectedAltitudeTo: selectedAltitudeDebounced[2],
-      selectedSeverity: selectedMinSeverity,
-    }
-  );
-  const observationsFeatureCollection = useMemo(() => {
-    const hexagons = GeoUtils.prepareHexagonsDataForMapHexagons({
-      data: filteredObservationsData,
-    });
-
-    const groupedObservationsData = groupByHexIdAndSelectMostSevere({
-      hexagons,
-    });
-
-    return GeoUtils.getHexagonsFeatureCollection(
-      Object.values(groupedObservationsData)
-    );
-  }, [filteredObservationsData]);
+  const observationsFeatureCollection = useMemo(() => observationsData?.toFeatureCollection(), [observationsData]);
 
   // ADSB
   const adsbFlow = useMemo(() => sdk.createAdsbFlow(), [sdk]);
@@ -208,8 +187,21 @@ const App = ({ sdk }) => {
     updateObservationsConfig({
       polygon,
       aircraftCategory,
+      // Client filters
+      historyHours: Number(hours),
+      minAltitude: selectedAltitudeDebounced[0],
+      maxAltitude: selectedAltitudeDebounced[2],
+      minSeverity: selectedMinSeverity,
     });
-  }, [mapIsReady, map, updateObservationsConfig, aircraftCategory]);
+  }, [
+    mapIsReady,
+    map,
+    updateObservationsConfig,
+    aircraftCategory,
+    hours,
+    selectedAltitudeDebounced,
+    selectedMinSeverity,
+  ]);
 
   useEffect(() => {
     if (!mapIsReady) return;
