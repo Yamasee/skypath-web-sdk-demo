@@ -60,6 +60,7 @@ const DEFAULT_DEBOUNCE_TIME = 500;
 // Map layers configurations
 const MAP_GEOJSON_LAYER_CONFIG = {
   id: "geojson-layer",
+  wrapLongitude: true,
   extruded: false,
   filled: true,
   getElevation: 1,
@@ -82,6 +83,7 @@ const MAP_GEOJSON_LAYER_CONFIG = {
 
 const MAP_OBSERVATION_CONFIG = {
   id: "observation",
+  wrapLongitude: true,
   extruded: false,
   filled: true,
   getElevation: 1000,
@@ -108,6 +110,7 @@ const MAP_OBSERVATION_CONFIG = {
 };
 const MAP_ONELAYER_CONFIG = {
   id: 'oneLayer',
+  wrapLongitude: true,
   extruded: false,
   filled: true,
   getElevation: 1000,
@@ -136,6 +139,7 @@ const MAP_ONELAYER_CONFIG = {
 };
 const MAP_EQUATOR_CONFIG = {
   id: "equator-layer",
+  wrapLongitude: true,
   stroked: true,
   filled: false,
   getLineColor: [255, 255, 255, 50],
@@ -155,6 +159,7 @@ const MAP_EQUATOR_CONFIG = {
 };
 const MAP_ADSB_MIDDLE_CONFIG = {
   id: 'adsb-layer-middle',
+  wrapLongitude: true,
   extruded: false,
   filled: true,
   getElevation: 1000,
@@ -181,6 +186,7 @@ const MAP_ADSB_MIDDLE_CONFIG = {
 };
 const MAP_ADSB_RING_CONFIG = {
   id: "adsb-layer-ring",
+  wrapLongitude: true,
   extruded: false,
   filled: false,
   getElevation: 1000,
@@ -194,6 +200,7 @@ const MAP_ADSB_RING_CONFIG = {
 };
 const MAP_H3_LAYER_CONFIG = {
   id: "h3-layer",
+  wrapLongitude: true,
   extruded: true,
   filled: true,
   getElevation: 1,
