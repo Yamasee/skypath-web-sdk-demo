@@ -95,7 +95,7 @@ const App = ({ sdk }) => {
     const hexagons = Nowcasting.prepareNowcastingDataForMapHexagons({
       data: filteredNowcastingData,
     });
-    return GeoUtils.getHexagonsFeatureCollection(hexagons);
+    return GeoUtils.getHexagonsFeatureCollection({ hexagons });
   }, [filteredNowcastingData]);
 
   // Observations
@@ -135,25 +135,25 @@ const App = ({ sdk }) => {
       hexagons,
     });
 
-    const middleArea = GeoUtils.getHexagonsFeatureCollection(
-      Object.values(groupedAdsbData),
-      0.5,
-    );
-    const ring = GeoUtils.getHexagonsFeatureCollection(
-      Object.values(groupedAdsbData),
-      1,
-    );
+    const middleArea = GeoUtils.getHexagonsFeatureCollection({
+        hexagons: Object.values(groupedAdsbData),
+        scale: 0.5,
+      });
+    const ring = GeoUtils.getHexagonsFeatureCollection({
+        hexagons: Object.values(groupedAdsbData),
+        scale: 1,
+      });
     return {
       middleArea,
       ring,
     }
-    // return GeoUtils.getHexagonsFeatureCollection(hexagons);
+    // return GeoUtils.getHexagonsFeatureCollection({ hexagons });
   }, [filteredAdsbData]);
 
   // Handlers
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSetSelectedAltitude = useCallback(
-    CoreUtils.debounce((value) => setSelectedAltitudeDebounced(value), 500),
+    CoreUtils.debounce({ fn: (value) => setSelectedAltitudeDebounced(value), delay: 500 }),
     [setSelectedAltitudeDebounced]
   );
 
@@ -166,9 +166,9 @@ const App = ({ sdk }) => {
     setAircraftCategory(value);
   };
 
-  const handleMapMove = CoreUtils.debounce(() => {
+  const handleMapMove = CoreUtils.debounce({ fn: () => {
     if (!mapIsReady) return;
-    const polygon = GeoUtils.getMapPolygon(map);
+    const polygon = GeoUtils.getMapPolygon({ map });
 
     changeNowcastingViewState();
     updateObservationsConfig({
@@ -178,11 +178,13 @@ const App = ({ sdk }) => {
     updateAdsbConfig({
       polygon,
     });
-  }, 500);
+  },
+    delay: 500
+  });
 
   useEffect(() => {
     if (!mapIsReady) return;
-    const polygon = GeoUtils.getMapPolygon(map);
+    const polygon = GeoUtils.getMapPolygon({ map });
 
     updateObservationsConfig({
       polygon,
@@ -205,7 +207,7 @@ const App = ({ sdk }) => {
 
   useEffect(() => {
     if (!mapIsReady) return;
-    const polygon = GeoUtils.getMapPolygon(map);
+    const polygon = GeoUtils.getMapPolygon({ map });
 
     updateAdsbConfig({
       polygon,

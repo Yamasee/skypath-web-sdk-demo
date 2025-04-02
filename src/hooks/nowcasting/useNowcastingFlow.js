@@ -4,10 +4,10 @@ import { DEFAULT_DEBOUNCE_TIME } from "../../config";
 import {checkMapIsReady} from "../../lib/general-utils";
 
 // Debounce time for updating hexIds
-const updateHexIds = CoreUtils.debounce((map, onResult) => {
-  const hexIds = GeoUtils.getHexIdsFromMapboxMap(map);
+const updateHexIds = CoreUtils.debounce({ fn: (map, onResult) => {
+  const hexIds = GeoUtils.getHexIdsFromMapboxMap({ map });
   onResult(hexIds);
-}, DEFAULT_DEBOUNCE_TIME);
+}, delay: DEFAULT_DEBOUNCE_TIME });
 
 // TODO: get rid of map; pass polygons
 
@@ -44,7 +44,7 @@ export const useNowcastingFlow = (nowcastingFlow, map) => {
     if (!mapIsReady || !nowcastingFlow) return;
 
     // Get hexIds from map
-    const hexIds = GeoUtils.getHexIdsFromMapboxMap(map);
+    const hexIds = GeoUtils.getHexIdsFromMapboxMap({ map });
 
     // Start nowcasting flow
     nowcastingFlow.onData((data) => setNowcastingData(data));
