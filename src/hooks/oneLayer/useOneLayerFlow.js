@@ -24,7 +24,7 @@ const App = ({ sdk, map, mapIsReady, options }) => {
   useEffect(() => {
     if (!mapIsReady) return;
 
-    const polygon = GeoUtils.getMapPolygon(map);
+    const polygon = GeoUtils.getMapPolygon({ map });
 
     updateConfig({
       // Config
