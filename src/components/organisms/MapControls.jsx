@@ -76,7 +76,7 @@ const MapControls = ({
             value={[selectedForecast]}
             onValueChange={([value]) => setSelectedForecast(value)}
             min={0}
-            max={6}
+            max={12}
           />
         </SliderPanel>
         <SliderPanel>
