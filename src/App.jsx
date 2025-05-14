@@ -154,16 +154,16 @@ const App = ({ sdk }) => {
 
   const handleMapMove = CoreUtils.debounce({ fn: () => {
     if (!mapIsReady) return;
-    const currenPolygon = GeoUtils.getMapPolygon({ map });
-    setPolygon(currenPolygon);
+    const currentPolygon = GeoUtils.getMapPolygon({ map });
+    setPolygon(currentPolygon);
   },
     delay: 500
   });
 
   useEffect(() => {
     if (!mapIsReady) return;
-    const currenPolygon = GeoUtils.getMapPolygon({ map });
-    setPolygon(currenPolygon);
+    const currentPolygon = GeoUtils.getMapPolygon({ map });
+    setPolygon(currentPolygon);
 
   }, [map, setPolygon, mapIsReady]);
 
