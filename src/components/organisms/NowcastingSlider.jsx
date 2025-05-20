@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { Root, Track, Range, Division, Thumb } from "../molecules/Slider";
 
-const NUMBER_OF_TICKS = 7;
+const NUMBER_OF_TICKS = 13;
 
 const NowcastingDivisionLabel = ({ children }) => (
   <div className="absolute translate-y-6">{children}</div>

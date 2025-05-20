@@ -1,11 +1,10 @@
 import dayjs from "dayjs";
 import { GeoJsonLayer } from "deck.gl";
 import { useMemo, useEffect } from "react";
-import { GeoUtils } from "@skypath-io/web-sdk";
 import { MAP_ONELAYER_CONFIG } from "../../config";
 import { useHexagonsFlow } from "../hexagons/useHexagonsFlow";
 
-const App = ({ sdk, map, mapIsReady, options }) => {
+const App = ({ sdk, polygon, options }) => {
   const { selectedMinSeverity, hours, selectedAltitudeDebounced, nowcastingAlt, aircraftCategory, selectedForecast } = options;
 
   // Create flow
@@ -22,10 +21,6 @@ const App = ({ sdk, map, mapIsReady, options }) => {
 
   // Update config
   useEffect(() => {
-    if (!mapIsReady) return;
-
-    const polygon = GeoUtils.getMapPolygon({ map });
-
     updateConfig({
       // Config
       polygon,
@@ -39,7 +34,7 @@ const App = ({ sdk, map, mapIsReady, options }) => {
       maxAltitude: selectedAltitudeDebounced[2],
       minSeverity: selectedMinSeverity,
     });
-  }, [aircraftCategory, hours, map, mapIsReady, nowcastingAlt,
+  }, [aircraftCategory, hours, polygon, nowcastingAlt,
     selectedForecast, updateConfig, selectedMinSeverity, selectedAltitudeDebounced]);
 
   // Create layer

@@ -14,7 +14,6 @@ import {
   ALTITUDE_SLIDER_INITIAL_VALUE,
   INITIAL_MAP_STYLE,
   INITIAL_MAP_VIEW_STATE,
-  MAP_GEOJSON_LAYER_CONFIG,
   MAP_OBSERVATION_CONFIG,
   MAP_ADSB_RING_CONFIG,
   MAP_ADSB_MIDDLE_CONFIG,
@@ -24,12 +23,10 @@ import {
 import {
   CoreUtils,
   GeoUtils,
-  Nowcasting,
   Observations,
 } from "@skypath-io/web-sdk";
 // Features
-import { useNowcastingFlow } from "./hooks/nowcasting/useNowcastingFlow";
-import { useNowcastingFiltering } from "./hooks/nowcasting/useNowcastingFiltering";
+import useNowcastingFlow from "./hooks/nowcasting/useNowcastingFlow";
 import { groupByHexIdAndSelectMostSevere } from "./lib/general-utils";
 import { useHexagonsFlow } from "./hooks/hexagons/useHexagonsFlow";
 import { useHexagonsFiltering } from "./hooks/hexagons/useHexagonsFiltering";
@@ -38,6 +35,7 @@ import useOneLayerFlow from "./hooks/oneLayer/useOneLayerFlow";
 const App = ({ sdk }) => {
   // MAP
   const [map, setMap] = useState(null);
+  const [polygon, setPolygon] = useState(null);
   const mapIsReady = useMemo(() => map?.loaded(), [map]);
 
   // Map configuration
@@ -58,7 +56,6 @@ const App = ({ sdk }) => {
     ALTITUDE_SLIDER_INITIAL_VALUE
   );
   const [bottomAlt, nowcastingAlt, topAlt] = selectedAltitude;
-  const [, nowcastingAltDebounced] = selectedAltitudeDebounced;
 
   // OneLayer
   const {
@@ -66,7 +63,7 @@ const App = ({ sdk }) => {
     toggle: toggleOneLayer,
     isProcessing: isOneLayerLoading,
     isRunning: isOneLayerRunning
-  } = useOneLayerFlow({sdk ,map, mapIsReady, options: {
+  } = useOneLayerFlow({sdk , polygon, options: {
     selectedMinSeverity,
     hours,
     selectedAltitudeDebounced,
@@ -75,28 +72,17 @@ const App = ({ sdk }) => {
     selectedForecast,
   }});
 
-  // Nowcasting
-  const nowcastingFlow = useMemo(() => sdk.createNowcastingFlow(), [sdk]);
+  // Nowcasting flow
   const {
-    nowcastingData,
-    changeViewState: changeNowcastingViewState,
+    layer: nowcastingLayer,
     toggle: toggleNowcasting,
-    isRunning: isRunningNowcasting,
-  } = useNowcastingFlow(nowcastingFlow, map);
-  const { filteredData: filteredNowcastingData } = useNowcastingFiltering(
-    nowcastingData,
-    {
-      selectedSeverity: selectedMinSeverity,
-      selectedAltitude: nowcastingAltDebounced,
-      selectedForecast,
-    }
-  );
-  const nowcastingFeatureCollection = useMemo(() => {
-    const hexagons = Nowcasting.prepareNowcastingDataForMapHexagons({
-      data: filteredNowcastingData,
-    });
-    return GeoUtils.getHexagonsFeatureCollection({ hexagons });
-  }, [filteredNowcastingData]);
+    isProcessing: isNowcastingLoading,
+    isRunning: isRunningNowcasting
+  } = useNowcastingFlow({sdk , polygon, options: {
+    selectedMinSeverity,
+    selectedAltitudeDebounced,
+    selectedForecast,
+  }});
 
   // Observations
   const observationsFlow = useMemo(() => sdk.createObservationsFlow(), [sdk]);
@@ -168,24 +154,20 @@ const App = ({ sdk }) => {
 
   const handleMapMove = CoreUtils.debounce({ fn: () => {
     if (!mapIsReady) return;
-    const polygon = GeoUtils.getMapPolygon({ map });
-
-    changeNowcastingViewState();
-    updateObservationsConfig({
-      polygon,
-      aircraftCategory,
-    });
-    updateAdsbConfig({
-      polygon,
-    });
+    const currentPolygon = GeoUtils.getMapPolygon({ map });
+    setPolygon(currentPolygon);
   },
     delay: 500
   });
 
   useEffect(() => {
     if (!mapIsReady) return;
-    const polygon = GeoUtils.getMapPolygon({ map });
+    const currentPolygon = GeoUtils.getMapPolygon({ map });
+    setPolygon(currentPolygon);
 
+  }, [map, setPolygon, mapIsReady]);
+
+  useEffect(() => {
     updateObservationsConfig({
       polygon,
       aircraftCategory,
@@ -196,9 +178,8 @@ const App = ({ sdk }) => {
       minSeverity: selectedMinSeverity,
     });
   }, [
-    mapIsReady,
-    map,
     updateObservationsConfig,
+    polygon,
     aircraftCategory,
     hours,
     selectedAltitudeDebounced,
@@ -206,15 +187,8 @@ const App = ({ sdk }) => {
   ]);
 
   useEffect(() => {
-    if (!mapIsReady) return;
-    const polygon = GeoUtils.getMapPolygon({ map });
-
-    updateAdsbConfig({
-      polygon,
-    });
-  }, [
-    mapIsReady, map, updateAdsbConfig
-  ]);
+    updateAdsbConfig({ polygon });
+  }, [ polygon, updateAdsbConfig ]);
 
   const layers = [
     new GeoJsonLayer({
@@ -235,15 +209,11 @@ const App = ({ sdk }) => {
       visible: isRunningAdsb,
       data: adsbFeatureCollections.ring,
     }),
-    new GeoJsonLayer({
-      ...MAP_GEOJSON_LAYER_CONFIG,
-      visible: isRunningNowcasting,
-      data: nowcastingFeatureCollection,
-    }),
+    nowcastingLayer,
     oneLayer,
   ]
 
-  const isLoadingLayers = isProcessingAdsb || isOneLayerLoading;
+  const isLoadingLayers = isProcessingAdsb || isOneLayerLoading || isNowcastingLoading;
 
   return (
     <div className={cn("relative w-screen h-screen overflow-hidden border-4 border-[#191a1a]", isLoadingLayers && 'border-red-500')}>

@@ -1,74 +1,54 @@
-import { useCallback, useEffect, useState } from "react";
-import { CoreUtils, GeoUtils } from "@skypath-io/web-sdk";
-import { DEFAULT_DEBOUNCE_TIME } from "../../config";
-import {checkMapIsReady} from "../../lib/general-utils";
+import {GeoJsonLayer} from "deck.gl";
+import {useEffect, useMemo} from "react";
+import {MAP_GEOJSON_LAYER_CONFIG} from "../../config";
+import {useHexagonsFlow} from "../hexagons/useHexagonsFlow";
 
-// Debounce time for updating hexIds
-const updateHexIds = CoreUtils.debounce({ fn: (map, onResult) => {
-  const hexIds = GeoUtils.getHexIdsFromMapboxMap({ map });
-  onResult(hexIds);
-}, delay: DEFAULT_DEBOUNCE_TIME });
+const useNowcastingFlow = ({ sdk , polygon, options }) => {
+  const {selectedMinSeverity, selectedAltitudeDebounced, selectedForecast } = options;
 
-// TODO: get rid of map; pass polygons
+  // Create flow
+  const nowcastingFlow = useMemo(() => sdk.createNowcastingFlow(), [sdk]);
 
-/**
- * Custom hook to handle the nowcasting flow
- * 
- * @param {Object} nowcastingFlow Nowcasting flow instance
- * @param {Object} map Map instance
- * @returns {Object} nowcastingData, changeViewState
- */
-export const useNowcastingFlow = (nowcastingFlow, map) => {
-
-  // Raw data from nowcasting flow
-  const [nowcastingData, setNowcastingData] = useState({});
-  const [isRunning, setIsRunning] = useState(
-    nowcastingFlow.getState() === "running"
-  );
-
-  const changeViewState = useCallback(() => {
-    // Check if map is ready
-    const mapIsReady = checkMapIsReady(map);
-    if (!mapIsReady || !nowcastingFlow) return;
-
-    // Update hexIds
-    updateHexIds(map, (hexIds) => {
-      nowcastingFlow.updateConfig({ hexIds });
-    });
-  }, [map, nowcastingFlow]);
-
-
-  useEffect(() => {
-    // Check if map is ready
-    const mapIsReady = checkMapIsReady(map);
-    if (!mapIsReady || !nowcastingFlow) return;
-
-    // Get hexIds from map
-    const hexIds = GeoUtils.getHexIdsFromMapboxMap({ map });
-
-    // Start nowcasting flow
-    nowcastingFlow.onData((data) => setNowcastingData(data));
-    nowcastingFlow.start();
-    const _isRunning = nowcastingFlow.getState() === "running";
-    setIsRunning(_isRunning);
-
-    // update config file with the hexIds for initial load
-    nowcastingFlow.updateConfig({ hexIds });
-    // Cleanup
-    return () => nowcastingFlow.terminate();
-  }, [map, nowcastingFlow]);
-
-  const toggle = useCallback(() => {
-    let _isRunning = nowcastingFlow.getState() === "running";
-    nowcastingFlow[_isRunning ? "stop" : "start"]();
-    _isRunning = nowcastingFlow.getState() === "running";
-    setIsRunning(_isRunning);
-  }, [nowcastingFlow]);
-
-  return {
-    nowcastingData,
-    changeViewState,
+  // Use flow
+  const {
+    data,
+    updateConfig,
     toggle,
     isRunning,
+    isProcessing,
+  } = useHexagonsFlow(nowcastingFlow);
+
+  // get the data in a featureCollection format
+  const featureCollection = useMemo(() => data?.toFeatureCollection(), [data]);
+
+  // Update flow config
+  useEffect(() => {
+    updateConfig({
+      // Config
+      polygon,
+      // Local Filters
+      forecast: selectedForecast,
+      minAltitude: selectedAltitudeDebounced[1],
+      maxAltitude: selectedAltitudeDebounced[1],
+      minSeverity: selectedMinSeverity,
+    });
+  }, [polygon, selectedForecast, updateConfig, selectedMinSeverity, selectedAltitudeDebounced]);
+
+  // Create layer
+  const layer = useMemo(() => new GeoJsonLayer(
+    {
+    ...MAP_GEOJSON_LAYER_CONFIG,
+    visible: isRunning && !!featureCollection,
+    data: featureCollection,
+  }
+  ), [featureCollection, isRunning])
+
+  return {
+    layer,
+    toggle,
+    isRunning,
+    isProcessing,
   };
-};
+}
+
+export default useNowcastingFlow;

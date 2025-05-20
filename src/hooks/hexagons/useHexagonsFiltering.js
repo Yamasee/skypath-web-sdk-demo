@@ -18,10 +18,10 @@ export const useHexagonsFiltering = (data, filters) => {
   const filteredData = useMemo(() => {
     if (!data) return null;
     const filters = {
-      hoursAgo: selectedHoursAgo,
-      altitudeFrom: selectedAltitudeFrom,
-      altitudeTo: selectedAltitudeTo,
-      severity: selectedSeverity,
+      historyHours: selectedHoursAgo,
+      minAltitude: selectedAltitudeFrom,
+      maxAltitude: selectedAltitudeTo,
+      minSeverity: selectedSeverity,
     };
     return GeoUtils.getHexagonsDataSlice({ data, filters });
   }, [data, selectedHoursAgo, selectedAltitudeFrom, selectedAltitudeTo, selectedSeverity]);
