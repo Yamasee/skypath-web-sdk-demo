@@ -49,7 +49,7 @@ const HOURS_OPTIONS = [
 
 // Default configurations
 const ALTITUDE_SLIDER_CONFIG = {
-  min: 0,
+  min: 5,
   max: 50,
   step: 1,
   minStepsBetweenThumbs: 3,
