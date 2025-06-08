@@ -14,9 +14,6 @@ import {
   ALTITUDE_SLIDER_INITIAL_VALUE,
   INITIAL_MAP_STYLE,
   INITIAL_MAP_VIEW_STATE,
-  MAP_OBSERVATION_CONFIG,
-  MAP_ADSB_RING_CONFIG,
-  MAP_ADSB_MIDDLE_CONFIG,
   MAP_EQUATOR_CONFIG,
 } from "./config";
 // SkyPath SDK
@@ -27,10 +24,9 @@ import {
 } from "@skypath-io/web-sdk";
 // Features
 import useNowcastingFlow from "./hooks/nowcasting/useNowcastingFlow";
-import { groupByHexIdAndSelectMostSevere } from "./lib/general-utils";
-import { useHexagonsFlow } from "./hooks/hexagons/useHexagonsFlow";
-import { useHexagonsFiltering } from "./hooks/hexagons/useHexagonsFiltering";
 import useOneLayerFlow from "./hooks/oneLayer/useOneLayerFlow";
+import useAdsbFlow from "./hooks/adsb/useAdsbFlow.js";
+import useObservationsFlow from "./hooks/observations/useObservationsFlow.js";
 
 const App = ({ sdk }) => {
   // MAP
@@ -57,6 +53,18 @@ const App = ({ sdk }) => {
   );
   const [bottomAlt, nowcastingAlt, topAlt] = selectedAltitude;
 
+  // Adsb flow
+  const {
+    layers: adsbLayers,
+    toggle: toggleAdsbLayer,
+    isProcessing: isAdsbLoading,
+    isRunning: isAdsbRunning
+  } = useAdsbFlow({sdk , polygon, options: {
+    selectedMinSeverity,
+    selectedAltitudeDebounced,
+    hours,
+  }});
+
   // OneLayer
   const {
     layer: oneLayer,
@@ -72,6 +80,19 @@ const App = ({ sdk }) => {
     selectedForecast,
   }});
 
+  // Observations
+  const {
+    layer: observationsLayer,
+    toggle: toggleObservations,
+    isProcessing: isObservationsLoading,
+    isRunning: isRunningObservations,
+  } = useObservationsFlow({sdk , polygon, options: {
+    selectedMinSeverity,
+    hours,
+    selectedAltitudeDebounced,
+    aircraftCategory,
+  }});
+
   // Nowcasting flow
   const {
     layer: nowcastingLayer,
@@ -83,58 +104,6 @@ const App = ({ sdk }) => {
     selectedAltitudeDebounced,
     selectedForecast,
   }});
-
-  // Observations
-  const observationsFlow = useMemo(() => sdk.createObservationsFlow(), [sdk]);
-  const {
-    data: observationsData,
-    updateConfig: updateObservationsConfig,
-    toggle: toggleObservations,
-    isRunning: isRunningObservations,
-  } = useHexagonsFlow(observationsFlow);
-  const observationsFeatureCollection = useMemo(() => observationsData?.toFeatureCollection(), [observationsData]);
-
-  // ADSB
-  const adsbFlow = useMemo(() => sdk.createAdsbFlow(), [sdk]);
-  const {
-    data: adsbData,
-    updateConfig: updateAdsbConfig,
-    toggle: toggleAdsb,
-    isRunning: isRunningAdsb,
-    isProcessing: isProcessingAdsb,
-  } = useHexagonsFlow(adsbFlow);
-  const { filteredData: filteredAdsbData } = useHexagonsFiltering(
-    adsbData,
-    {
-      selectedHoursAgo: Number(hours),
-      selectedAltitudeFrom: selectedAltitudeDebounced[0],
-      selectedAltitudeTo: selectedAltitudeDebounced[2],
-      selectedSeverity: selectedMinSeverity,
-    }
-  );
-  const adsbFeatureCollections = useMemo(() => {
-    const hexagons = GeoUtils.prepareHexagonsDataForMapHexagons({
-      data: filteredAdsbData,
-    });
-
-    const groupedAdsbData = groupByHexIdAndSelectMostSevere({
-      hexagons,
-    });
-
-    const middleArea = GeoUtils.getHexagonsFeatureCollection({
-        hexagons: Object.values(groupedAdsbData),
-        scale: 0.5,
-      });
-    const ring = GeoUtils.getHexagonsFeatureCollection({
-        hexagons: Object.values(groupedAdsbData),
-        scale: 1,
-      });
-    return {
-      middleArea,
-      ring,
-    }
-    // return GeoUtils.getHexagonsFeatureCollection({ hexagons });
-  }, [filteredAdsbData]);
 
   // Handlers
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -167,53 +136,17 @@ const App = ({ sdk }) => {
 
   }, [map, setPolygon, mapIsReady]);
 
-  useEffect(() => {
-    updateObservationsConfig({
-      polygon,
-      aircraftCategory,
-      // Client filters
-      historyHours: Number(hours),
-      minAltitude: selectedAltitudeDebounced[0],
-      maxAltitude: selectedAltitudeDebounced[2],
-      minSeverity: selectedMinSeverity,
-    });
-  }, [
-    updateObservationsConfig,
-    polygon,
-    aircraftCategory,
-    hours,
-    selectedAltitudeDebounced,
-    selectedMinSeverity,
-  ]);
-
-  useEffect(() => {
-    updateAdsbConfig({ polygon });
-  }, [ polygon, updateAdsbConfig ]);
-
   const layers = [
     new GeoJsonLayer({
       ...MAP_EQUATOR_CONFIG,
     }),
-    new GeoJsonLayer({
-      ...MAP_OBSERVATION_CONFIG,
-      visible: isRunningObservations,
-      data: observationsFeatureCollection,
-    }),
-    new GeoJsonLayer({
-      ...MAP_ADSB_MIDDLE_CONFIG,
-      visible: isRunningAdsb,
-      data: adsbFeatureCollections.middleArea,
-    }),
-    new GeoJsonLayer({
-      ...MAP_ADSB_RING_CONFIG,
-      visible: isRunningAdsb,
-      data: adsbFeatureCollections.ring,
-    }),
+    observationsLayer,
+    ...adsbLayers,
     nowcastingLayer,
     oneLayer,
   ]
 
-  const isLoadingLayers = isProcessingAdsb || isOneLayerLoading || isNowcastingLoading;
+  const isLoadingLayers = isObservationsLoading || isAdsbLoading || isOneLayerLoading || isNowcastingLoading;
 
   return (
     <div className={cn("relative w-screen h-screen overflow-hidden border-4 border-[#191a1a]", isLoadingLayers && 'border-red-500')}>
@@ -263,11 +196,11 @@ const App = ({ sdk }) => {
         <button
           className={cn(
             "px-2 py-1 rounded-md",
-            isRunningAdsb
+            isAdsbRunning
               ? "bg-gradient-to-b from-white to-gray-100 text-gray-950"
               : "bg-gray-200 text-gray-400"
           )}
-          onClick={toggleAdsb}
+          onClick={toggleAdsbLayer}
         >
           ADSB
         </button>

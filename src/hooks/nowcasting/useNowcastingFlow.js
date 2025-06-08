@@ -7,7 +7,7 @@ const useNowcastingFlow = ({ sdk , polygon, options }) => {
   const {selectedMinSeverity, selectedAltitudeDebounced, selectedForecast } = options;
 
   // Create flow
-  const nowcastingFlow = useMemo(() => sdk.createNowcastingFlow(), [sdk]);
+  const flow = useMemo(() => sdk.createNowcastingFlow(), [sdk]);
 
   // Use flow
   const {
@@ -16,13 +16,17 @@ const useNowcastingFlow = ({ sdk , polygon, options }) => {
     toggle,
     isRunning,
     isProcessing,
-  } = useHexagonsFlow(nowcastingFlow);
+  } = useHexagonsFlow(flow);
 
   // get the data in a featureCollection format
   const featureCollection = useMemo(() => data?.toFeatureCollection(), [data]);
 
   // Update flow config
   useEffect(() => {
+    if (!polygon?.length) {
+      return;
+    }
+
     updateConfig({
       // Config
       polygon,
