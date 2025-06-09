@@ -1,14 +1,13 @@
-import dayjs from "dayjs";
 import { GeoJsonLayer } from "deck.gl";
 import { useMemo, useEffect } from "react";
-import { MAP_ONELAYER_CONFIG } from "../../config";
+import { MAP_OBSERVATION_CONFIG } from "../../config";
 import { useHexagonsFlow } from "../hexagons/useHexagonsFlow";
 
-const useOneLayerFlow = ({ sdk, polygon, options }) => {
-  const { selectedMinSeverity, hours, selectedAltitudeDebounced, nowcastingAlt, aircraftCategory, selectedForecast } = options;
+const useObservationsFlow = ({ sdk, polygon, options }) => {
+  const { selectedMinSeverity, hours, selectedAltitudeDebounced, aircraftCategory } = options;
 
   // Create flow
-  const flow = useMemo(() => sdk.createOneLayerFlow(), [sdk]);
+  const flow = useMemo(() => sdk.createObservationsFlow(), [sdk]);
 
   // Use flow
   const {
@@ -27,25 +26,21 @@ const useOneLayerFlow = ({ sdk, polygon, options }) => {
     updateConfig({
       // Config
       polygon,
-      hoursAgo: hours,
-
-      // Local Filters
-      nowcastingAlt,
-      forecastTs: dayjs().add(selectedForecast, 'hour').unix(),
       aircraftCategory,
+      // Client filters
+      historyHours: Number(hours),
       minAltitude: selectedAltitudeDebounced[0],
       maxAltitude: selectedAltitudeDebounced[2],
       minSeverity: selectedMinSeverity,
     });
-  }, [aircraftCategory, hours, polygon, nowcastingAlt,
-    selectedForecast, updateConfig, selectedMinSeverity, selectedAltitudeDebounced]);
+  }, [aircraftCategory, hours, polygon, updateConfig, selectedMinSeverity, selectedAltitudeDebounced]);
 
   // get the data in a featureCollection format
   const featureCollection = useMemo(() => data?.toFeatureCollection(), [data]);
 
   // Create layer
   const layer = useMemo(() => new GeoJsonLayer({
-      ...MAP_ONELAYER_CONFIG,
+      ...MAP_OBSERVATION_CONFIG,
       visible: isRunning && !!featureCollection,
       data: featureCollection,
     }),[isRunning, featureCollection]);
@@ -54,4 +49,4 @@ const useOneLayerFlow = ({ sdk, polygon, options }) => {
   return { layer, toggle, isProcessing, isRunning };
 };
 
-export default useOneLayerFlow;
+export default useObservationsFlow;
