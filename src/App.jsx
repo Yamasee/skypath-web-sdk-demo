@@ -11,6 +11,7 @@ import useMapLayers from "./hooks/general/useMapLayers";
 import useMapState from "./hooks/general/useMapState";
 
 const App = ({ sdk }) => {
+  const mapState = useMapState();
   const {
     map,
     polygon, 
@@ -31,7 +32,7 @@ const App = ({ sdk }) => {
     handleLoadMap,
     handleSetAircraftCategory,
     handleAltitudeChange
-  } = useMapState();
+  } = mapState;
 
   const {
     layers,
@@ -62,7 +63,12 @@ const App = ({ sdk }) => {
   } = layerControls;
 
   return (
-    <div className={cn("relative w-screen h-screen overflow-hidden border-4 border-[#191a1a]", isLoadingLayers && 'border-red-500')}>
+    <div 
+      className={cn(
+        "relative w-screen h-screen overflow-hidden border-4 border-[#191a1a]", 
+        isLoadingLayers && 'border-red-500'
+      )}
+    >
       <MapView 
         map={map}
         mapIsReady={mapIsReady}

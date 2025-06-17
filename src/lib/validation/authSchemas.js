@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { AUTH_STORAGE_KEY } from '../constants';
 
 const baseAuthSchema = z.object({
   proxyUrl: z.string().optional(),
@@ -19,8 +20,6 @@ export const AUTH_OPTIONS = {
   API_KEY: 'API_KEY',
   SIGNED_JWT: 'SIGNED_JWT',
 };
-
-export const AUTH_STORAGE_KEY = 'sdk-auth';
 
 export const restoreAuth = () => {
   try {

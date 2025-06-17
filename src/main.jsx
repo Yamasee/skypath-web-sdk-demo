@@ -1,15 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
-import "mapbox-gl/dist/mapbox-gl.css";
-import "./index.css";
-import AuthWrapper from "./AuthWrapper.jsx";
 import { ErrorBoundary } from "react-error-boundary";
+import App from "./App.jsx";
+import AuthWrapper from "./AuthWrapper.jsx";
 import Fallback from "./components/template/Fallback.jsx";
 
-const root = document.getElementById("root");
+import "mapbox-gl/dist/mapbox-gl.css";
+import "./index.css";
 
-ReactDOM.createRoot(root).render(
+const rootElement = document.getElementById("root");
+
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <ErrorBoundary FallbackComponent={Fallback}>
       <AuthWrapper>

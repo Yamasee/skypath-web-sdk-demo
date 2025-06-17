@@ -15,14 +15,15 @@ import {
   restoreAuth,
   preserveAuth
 } from "./lib/validation/authSchemas";
+import { 
+  SDK_PACKAGE_NAME, 
+  ERROR_MESSAGES 
+} from "./lib/constants";
 
-const SDK_PACKAGE_NAME = "@skypath-io/web-sdk";
 const SDK_VERSION = pkg.dependencies[SDK_PACKAGE_NAME]?.replace("^", "") || "N/A";
-const REQUIRED_FIELDS_ERROR_MESSAGE = "Required fields are not filled";
-const AUTHORIZATION_ERROR_MESSAGE = "Authorization error";
 
 const getValidationErrors = (zodError) => {
-  if (!zodError.format) return { general: REQUIRED_FIELDS_ERROR_MESSAGE };
+  if (!zodError.format) return { general: ERROR_MESSAGES.REQUIRED_FIELDS };
   
   const formatted = zodError.format();
   
@@ -41,7 +42,7 @@ const getValidationErrors = (zodError) => {
   
   return Object.keys(fieldErrors).length > 0 
     ? fieldErrors 
-    : { general: REQUIRED_FIELDS_ERROR_MESSAGE };
+    : { general: ERROR_MESSAGES.REQUIRED_FIELDS };
 };
 
 const INITIAL_FORM_VALUES = {
@@ -131,7 +132,7 @@ const AuthWrapper = ({ children }) => {
       })
       .catch((err) => {
         setSDK(null);
-        setErrors({ general: err.message || AUTHORIZATION_ERROR_MESSAGE });
+        setErrors({ general: err.message || ERROR_MESSAGES.AUTHORIZATION_ERROR });
       });
   }, [authOption, formData]);
 
