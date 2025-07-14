@@ -16,6 +16,8 @@ export const jwtAuthSchema = baseAuthSchema.extend({
   partnerId: z.string().min(2, { message: 'Partner ID must be at least 2 characters' }),
 });
 
+export const authUnionSchema = z.union([apiKeyAuthSchema, jwtAuthSchema]);
+
 export const AUTH_OPTIONS = {
   API_KEY: 'API_KEY',
   SIGNED_JWT: 'SIGNED_JWT',
@@ -24,7 +26,17 @@ export const AUTH_OPTIONS = {
 export const restoreAuth = () => {
   try {
     const savedAuth = localStorage.getItem(AUTH_STORAGE_KEY);
-    return savedAuth ? JSON.parse(savedAuth) : null;
+    if (!savedAuth) return null;
+
+    const parsed = JSON.parse(savedAuth);
+
+    const validation = authUnionSchema.safeParse(parsed);
+    if (!validation.success) {
+      console.error('Invalid authorization data structure:', validation.error);
+      return null;
+    }
+
+    return parsed;
   } catch (error) {
     console.error('Error restoring authorization data:', error);
     return null;

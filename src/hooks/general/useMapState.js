@@ -41,6 +41,7 @@ const useMapState = () => {
     selectedMinSeverity,
     setSelectedMinSeverity,
     aircraftCategory,
+    setAircraftCategory,
     hours,
     setHours,
     selectedAltitude,

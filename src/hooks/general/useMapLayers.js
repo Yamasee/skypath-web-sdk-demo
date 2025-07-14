@@ -6,7 +6,7 @@ import useObservationsFlow from "../observations/useObservationsFlow";
 const useMapLayers = ({ 
   sdk, 
   polygon, 
-  options 
+  options = {} 
 }) => {
   const {
     selectedMinSeverity,

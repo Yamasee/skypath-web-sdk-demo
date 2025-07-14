@@ -6,6 +6,7 @@ const AuthFooter = () => {
         <a
           href="https://skypath.io/contact/"
           target="_blank"
+          rel="noopener noreferrer"
           className="font-semibold text-violet-600 hover:text-violet-500 focus:outline-violet-600"
         >
           Contact us
@@ -14,6 +15,7 @@ const AuthFooter = () => {
       <a
         href="https://docs.skypath.io/js/introduction"
         target="_blank"
+        rel="noopener noreferrer"
         className="text-xs font-semibold leading-4 text-center text-violet-600 hover:text-violet-500 focus:outline-violet-600"
       >
         SDK Documentation
