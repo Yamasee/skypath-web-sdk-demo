@@ -13,7 +13,7 @@ const DivisionLabel = ({ value }) => (
 );
 
 const AltitudeSlider = forwardRef(
-  ({ className, nowcastingValue, ...props }, ref) => (
+  ({ className, forecastValue, ...props }, ref) => (
     <Root
       ref={ref}
       className={cn("flex-col h-full justify-center my-1.5", className)}
@@ -46,9 +46,9 @@ const AltitudeSlider = forwardRef(
       <Thumb orientation="horizontal" size="md" withDot>
         <Bubble>
           <div className="text-[13px] font-normal">
-            {formatAltitude(nowcastingValue)}
+            {formatAltitude(forecastValue)}
           </div>
-          <div className="text-[10px] text-[#697888] font-light">Nowcast</div>
+          <div className="text-[10px] text-[#697888] font-light">Forecast</div>
         </Bubble>
       </Thumb>
       <Thumb orientation="horizontal" size="lg" />

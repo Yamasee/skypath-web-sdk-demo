@@ -10,7 +10,7 @@ const useAdsbFlow = ({ sdk , polygon, options }) => {
   const {selectedMinSeverity, selectedAltitudeDebounced, hours } = options;
 
   // Create flow
-  const flow = useMemo(() => sdk.createAdsbFlow(), [sdk]);
+  const flow = useMemo(() => sdk.AVAILABLE_FLOWS.ADSB  ? sdk.createAdsbFlow() : null, [sdk]);
 
   // Use flow
   const {
@@ -58,7 +58,7 @@ const useAdsbFlow = ({ sdk , polygon, options }) => {
 
   // Update flow config
   useEffect(() => {
-    if (!polygon?.length) {
+    if (!polygon?.length || !flow) {
       return;
     }
 
@@ -66,7 +66,7 @@ const useAdsbFlow = ({ sdk , polygon, options }) => {
       // Config
       polygon
     });
-  }, [polygon, updateConfig]);
+  }, [flow, polygon, updateConfig]);
 
   // Create layers
   const middleAreaLayer = useMemo(() => new GeoJsonLayer(

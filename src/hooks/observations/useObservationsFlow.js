@@ -7,7 +7,7 @@ const useObservationsFlow = ({ sdk, polygon, options }) => {
   const { selectedMinSeverity, hours, selectedAltitudeDebounced, aircraftCategory } = options;
 
   // Create flow
-  const flow = useMemo(() => sdk.createObservationsFlow(), [sdk]);
+  const flow = useMemo(() => sdk.AVAILABLE_FLOWS.OBSERVATION ? sdk.createObservationsFlow() : null, [sdk]);
 
   // Use flow
   const {
@@ -20,9 +20,10 @@ const useObservationsFlow = ({ sdk, polygon, options }) => {
 
   // Update config
   useEffect(() => {
-    if (!polygon?.length) {
+    if (!polygon?.length || !flow) {
       return;
     }
+
     updateConfig({
       // Config
       polygon,
@@ -33,7 +34,7 @@ const useObservationsFlow = ({ sdk, polygon, options }) => {
       maxAltitude: selectedAltitudeDebounced[2],
       minSeverity: selectedMinSeverity,
     });
-  }, [aircraftCategory, hours, polygon, updateConfig, selectedMinSeverity, selectedAltitudeDebounced]);
+  }, [flow, aircraftCategory, hours, polygon, updateConfig, selectedMinSeverity, selectedAltitudeDebounced]);
 
   // get the data in a featureCollection format
   const featureCollection = useMemo(() => data?.toFeatureCollection(), [data]);

@@ -5,10 +5,10 @@ import { MAP_ONELAYER_CONFIG } from "../../config";
 import { useHexagonsFlow } from "../hexagons/useHexagonsFlow";
 
 const useOneLayerFlow = ({ sdk, polygon, options }) => {
-  const { selectedMinSeverity, hours, selectedAltitudeDebounced, nowcastingAlt, aircraftCategory, selectedForecast } = options;
+  const { selectedMinSeverity, hours, selectedAltitudeDebounced, forecastAlt, aircraftCategory, selectedForecast, isOnelayerForecastEnabled } = options;
 
   // Create flow
-  const flow = useMemo(() => sdk.createOneLayerFlow(), [sdk]);
+  const flow = useMemo(() => sdk.AVAILABLE_FLOWS.ONELAYER ? sdk.createOneLayerFlow() : null, [sdk]);
 
   // Use flow
   const {
@@ -21,23 +21,25 @@ const useOneLayerFlow = ({ sdk, polygon, options }) => {
 
   // Update config
   useEffect(() => {
-    if (!polygon?.length) {
+    if (!polygon?.length || !flow) {
       return;
     }
+
     updateConfig({
       // Config
       polygon,
       hoursAgo: hours,
 
       // Local Filters
-      nowcastingAlt,
+      isForecastEnabled: isOnelayerForecastEnabled,
+      forecastAlt,
       forecastTs: dayjs().add(selectedForecast, 'hour').unix(),
       aircraftCategory,
       minAltitude: selectedAltitudeDebounced[0],
       maxAltitude: selectedAltitudeDebounced[2],
       minSeverity: selectedMinSeverity,
     });
-  }, [aircraftCategory, hours, polygon, nowcastingAlt,
+  }, [flow, aircraftCategory, hours, polygon, forecastAlt, isOnelayerForecastEnabled,
     selectedForecast, updateConfig, selectedMinSeverity, selectedAltitudeDebounced]);
 
   // get the data in a featureCollection format

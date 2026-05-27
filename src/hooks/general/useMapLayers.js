@@ -1,4 +1,4 @@
-import useNowcastingFlow from "../nowcasting/useNowcastingFlow";
+import useForecastFlow from "../forecast/useForecastFlow";
 import useOneLayerFlow from "../oneLayer/useOneLayerFlow";
 import useAdsbFlow from "../adsb/useAdsbFlow";
 import useObservationsFlow from "../observations/useObservationsFlow";
@@ -12,7 +12,8 @@ const useMapLayers = ({
     selectedMinSeverity,
     selectedAltitudeDebounced,
     hours,
-    nowcastingAlt,
+    forecastAlt,
+    isOnelayerForecastEnabled,
     aircraftCategory,
     selectedForecast
   } = options;
@@ -46,7 +47,8 @@ const useMapLayers = ({
       selectedMinSeverity,
       hours,
       selectedAltitudeDebounced,
-      nowcastingAlt,
+      forecastAlt,
+      isOnelayerForecastEnabled,
       aircraftCategory,
       selectedForecast,
     }
@@ -69,13 +71,13 @@ const useMapLayers = ({
     }
   });
 
-  // Nowcasting flow
+  // Forecast flow
   const {
-    layer: nowcastingLayer,
-    toggle: toggleNowcasting,
-    isProcessing: isNowcastingLoading,
-    isRunning: isRunningNowcasting
-  } = useNowcastingFlow({
+    layer: forecastLayer,
+    toggle: toggleForecast,
+    isProcessing: isForecastLoading,
+    isRunning: isRunningForecast
+  } = useForecastFlow({
     sdk, 
     polygon, 
     options: {
@@ -88,15 +90,15 @@ const useMapLayers = ({
   const layers = [
     observationsLayer,
     ...adsbLayers,
-    nowcastingLayer,
+    forecastLayer,
     oneLayer,
   ].filter(Boolean);
 
-  const isLoadingLayers = isObservationsLoading || isAdsbLoading || isOneLayerLoading || isNowcastingLoading;
+  const isLoadingLayers = isObservationsLoading || isAdsbLoading || isOneLayerLoading || isForecastLoading;
 
   const layerControls = {
-    isRunningNowcasting,
-    toggleNowcasting,
+    isRunningForecast,
+    toggleForecast,
     isAdsbRunning,
     toggleAdsbLayer,
     isRunningObservations,
