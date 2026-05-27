@@ -7,7 +7,7 @@ const useForecastFlow = ({ sdk , polygon, options }) => {
   const {selectedMinSeverity, selectedAltitudeDebounced, selectedForecast } = options;
 
   // Create flow
-  const flow = useMemo(() => sdk.AVAILABLE_FLOWS.FORECAST ? sdk.createForecastFlow() : null, [sdk]);
+  const flow = useMemo(() => sdk.IS_FORECAST_ENABLED ? sdk.createForecastFlow() : null, [sdk]);
 
   // Use flow
   const {

@@ -8,7 +8,7 @@ const useOneLayerFlow = ({ sdk, polygon, options }) => {
   const { selectedMinSeverity, hours, selectedAltitudeDebounced, forecastAlt, aircraftCategory, selectedForecast, isOnelayerForecastEnabled } = options;
 
   // Create flow
-  const flow = useMemo(() => sdk.AVAILABLE_FLOWS.ONELAYER ? sdk.createOneLayerFlow() : null, [sdk]);
+  const flow = useMemo(() => sdk.IS_ONELAYER_ENABLED ? sdk.createOneLayerFlow() : null, [sdk]);
 
   // Use flow
   const {

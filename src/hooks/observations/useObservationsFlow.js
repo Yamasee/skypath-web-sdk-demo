@@ -7,7 +7,7 @@ const useObservationsFlow = ({ sdk, polygon, options }) => {
   const { selectedMinSeverity, hours, selectedAltitudeDebounced, aircraftCategory } = options;
 
   // Create flow
-  const flow = useMemo(() => sdk.AVAILABLE_FLOWS.OBSERVATION ? sdk.createObservationsFlow() : null, [sdk]);
+  const flow = useMemo(() => sdk.createObservationsFlow(), [sdk]);
 
   // Use flow
   const {

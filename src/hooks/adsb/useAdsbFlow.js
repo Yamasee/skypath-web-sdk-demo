@@ -10,7 +10,7 @@ const useAdsbFlow = ({ sdk , polygon, options }) => {
   const {selectedMinSeverity, selectedAltitudeDebounced, hours } = options;
 
   // Create flow
-  const flow = useMemo(() => sdk.AVAILABLE_FLOWS.ADSB  ? sdk.createAdsbFlow() : null, [sdk]);
+  const flow = useMemo(() => sdk.IS_ADSB_ENABLED  ? sdk.createAdsbFlow() : null, [sdk]);
 
   // Use flow
   const {
