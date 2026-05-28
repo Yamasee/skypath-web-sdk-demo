@@ -1,7 +1,7 @@
 import { ALTITUDE_SLIDER_CONFIG, AIRCRAFT_CATEGORY_OPTIONS, SEVERITY_OPTIONS, HOURS_OPTIONS } from '../../config';
 import {AltitudeSlider} from "./AltitudeSlider";
 import {SeveritySlider} from "./SeveritySlider";
-import {NowcastingSlider} from "./NowcastingSlider";
+import {ForecastSlider} from "./ForecastSlider";
 import { Panel as SliderPanel } from "../molecules/Slider/Panel";
 import { AltitudeDisplay } from "../atoms/AltitudeDisplay";
 import { Divider } from "../atoms/Divider";
@@ -24,7 +24,7 @@ const MapControls = ({
   selectedMinSeverity,
   setSelectedMinSeverity,
   bottomAlt,
-  nowcastingAlt,
+  forecastAlt,
   topAlt,
   aircraftCategory,
   setAircraftCategory,
@@ -66,17 +66,17 @@ const MapControls = ({
           value={selectedAltitude}
           onValueChange={handleAltitudeChange}
           orientation="vertical"
-          nowcastingValue={nowcastingAlt}
+          forecastValue={forecastAlt}
         />
         <AltitudeDisplay value={bottomAlt} />
       </div>
       <BottomPanelsContainer>
-        <SliderPanel>
-          <NowcastingSlider
+        <SliderPanel width={1000}>
+          <ForecastSlider
             value={[selectedForecast]}
             onValueChange={([value]) => setSelectedForecast(value)}
             min={0}
-            max={12}
+            max={23}
           />
         </SliderPanel>
         <SliderPanel>

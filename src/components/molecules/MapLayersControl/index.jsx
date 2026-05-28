@@ -16,20 +16,22 @@ const LayerToggleButton = ({ name, isRunning, onClick }) => (
 );
 
 const MapLayersControl = ({ 
-  isRunningNowcasting,
-  toggleNowcasting,
+  isRunningForecast,
+  toggleForecast,
   isAdsbRunning,
   toggleAdsbLayer,
   isRunningObservations,
   toggleObservations,
   isOneLayerRunning,
-  toggleOneLayer
+  toggleOneLayer,
+  isOnelayerForecastEnabled,
+  toggleOnelayerForecast
 }) => {
   const layerControls = [
     {
-      name: MAP_LAYERS.NOWCASTING,
-      isRunning: isRunningNowcasting,
-      toggle: toggleNowcasting,
+      name: MAP_LAYERS.FORECAST,
+      isRunning: isRunningForecast,
+      toggle: toggleForecast,
       top: "0.5em"
     },
     {
@@ -49,6 +51,12 @@ const MapLayersControl = ({
       isRunning: isOneLayerRunning,
       toggle: toggleOneLayer,
       top: "8em"
+    },
+    {
+      name: MAP_LAYERS.ONE_LAYER_FORECAST,
+      isRunning: isOneLayerRunning && isOnelayerForecastEnabled,
+      toggle: toggleOnelayerForecast,
+      top: "10.5em"
     }
   ];
 

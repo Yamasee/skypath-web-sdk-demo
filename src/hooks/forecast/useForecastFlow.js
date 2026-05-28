@@ -3,11 +3,11 @@ import {useEffect, useMemo} from "react";
 import {MAP_GEOJSON_LAYER_CONFIG} from "../../config";
 import {useHexagonsFlow} from "../hexagons/useHexagonsFlow";
 
-const useNowcastingFlow = ({ sdk , polygon, options }) => {
+const useForecastFlow = ({ sdk , polygon, options }) => {
   const {selectedMinSeverity, selectedAltitudeDebounced, selectedForecast } = options;
 
   // Create flow
-  const flow = useMemo(() => sdk.createNowcastingFlow(), [sdk]);
+  const flow = useMemo(() => sdk.IS_FORECAST_ENABLED ? sdk.createForecastFlow() : null, [sdk]);
 
   // Use flow
   const {
@@ -23,7 +23,7 @@ const useNowcastingFlow = ({ sdk , polygon, options }) => {
 
   // Update flow config
   useEffect(() => {
-    if (!polygon?.length) {
+    if (!polygon?.length || !flow) {
       return;
     }
 
@@ -36,7 +36,7 @@ const useNowcastingFlow = ({ sdk , polygon, options }) => {
       maxAltitude: selectedAltitudeDebounced[1],
       minSeverity: selectedMinSeverity,
     });
-  }, [polygon, selectedForecast, updateConfig, selectedMinSeverity, selectedAltitudeDebounced]);
+  }, [flow, polygon, selectedForecast, updateConfig, selectedMinSeverity, selectedAltitudeDebounced]);
 
   // Create layer
   const layer = useMemo(() => new GeoJsonLayer(
@@ -55,4 +55,4 @@ const useNowcastingFlow = ({ sdk , polygon, options }) => {
   };
 }
 
-export default useNowcastingFlow;
+export default useForecastFlow;

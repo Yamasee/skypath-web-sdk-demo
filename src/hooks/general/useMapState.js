@@ -6,6 +6,7 @@ import useDebouncedValue from './useDebouncedValue';
 const useMapState = () => {
   const [map, setMap] = useState(null);
   const [polygon, setPolygon] = useState(null);
+  const [isOnelayerForecastEnabled, setIsOnelayerForecastEnabled] = useState(true);
   const mapIsReady = useMemo(() => map?.loaded(), [map]);
 
   const [selectedForecast, setSelectedForecast] = useState(0);
@@ -24,7 +25,7 @@ const useMapState = () => {
 
   const selectedAltitudeDebounced = useDebouncedValue(selectedAltitude, 500);
 
-  const [bottomAlt, nowcastingAlt, topAlt] = selectedAltitude;
+  const [bottomAlt, forecastAlt, topAlt] = selectedAltitude;
 
   const handleLoadMap = useCallback(({ target }) => setMap(target), []);
   const handleSetAircraftCategory = useCallback((value) => setAircraftCategory(value), []);
@@ -47,8 +48,10 @@ const useMapState = () => {
     selectedAltitude,
     selectedAltitudeDebounced,
     bottomAlt,
-    nowcastingAlt,
+    forecastAlt,
     topAlt,
+    isOnelayerForecastEnabled,
+    setIsOnelayerForecastEnabled,
 
     handleLoadMap,
     handleSetAircraftCategory,

@@ -13,7 +13,7 @@ const INITIAL_MAP_VIEW_STATE = {
 
 const ALTITUDE_SLIDER_INITIAL_VALUE = [
   Observations.availableConfigInputs.minAltitude, // Floor altitude
-  35, // Nowcasting
+  35, // Forecast
   Observations.availableConfigInputs.maxAltitude, // Ceiling altitude
 ];
 

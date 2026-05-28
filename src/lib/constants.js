@@ -10,8 +10,9 @@ export const ERROR_MESSAGES = {
 };
 
 export const MAP_LAYERS = {
-  NOWCASTING: "Nowcasting",
+  FORECAST: "Forecast",
   ADSB: "ADSB",
   OBSERVATIONS: "Observations",
   ONE_LAYER: "OneLayer",
+  ONE_LAYER_FORECAST: "OneLayer Forecast",
 };

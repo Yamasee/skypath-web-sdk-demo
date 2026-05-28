@@ -27,11 +27,13 @@ const App = ({ sdk }) => {
     selectedAltitude,
     selectedAltitudeDebounced,
     bottomAlt,
-    nowcastingAlt,
+    forecastAlt,
     topAlt,
     handleLoadMap,
     handleSetAircraftCategory,
-    handleAltitudeChange
+    handleAltitudeChange,
+    isOnelayerForecastEnabled,
+    setIsOnelayerForecastEnabled
   } = mapState;
 
   const {
@@ -45,15 +47,16 @@ const App = ({ sdk }) => {
       selectedMinSeverity,
       selectedAltitudeDebounced,
       hours,
-      nowcastingAlt,
+      forecastAlt,
       aircraftCategory,
       selectedForecast,
+      isOnelayerForecastEnabled,
     }
   });
 
   const {
-    isRunningNowcasting,
-    toggleNowcasting,
+    isRunningForecast,
+    toggleForecast,
     isAdsbRunning,
     toggleAdsbLayer,
     isRunningObservations,
@@ -61,6 +64,14 @@ const App = ({ sdk }) => {
     isOneLayerRunning,
     toggleOneLayer
   } = layerControls;
+
+  const toggleOnelayerForecast = () => {
+    if (!isOneLayerRunning) {
+      return;
+    }
+
+    setIsOnelayerForecastEnabled((state) => !state);
+  }
 
   return (
     <div 
@@ -87,7 +98,7 @@ const App = ({ sdk }) => {
         selectedMinSeverity={selectedMinSeverity}
         setSelectedMinSeverity={setSelectedMinSeverity}
         bottomAlt={bottomAlt}
-        nowcastingAlt={nowcastingAlt}
+        forecastAlt={forecastAlt}
         topAlt={topAlt}
         aircraftCategory={aircraftCategory}
         setAircraftCategory={handleSetAircraftCategory}
@@ -95,14 +106,16 @@ const App = ({ sdk }) => {
         hours={hours}
       />
       <MapLayersControl 
-        isRunningNowcasting={isRunningNowcasting}
-        toggleNowcasting={toggleNowcasting}
+        isRunningForecast={isRunningForecast}
+        toggleForecast={toggleForecast}
         isAdsbRunning={isAdsbRunning}
         toggleAdsbLayer={toggleAdsbLayer}
         isRunningObservations={isRunningObservations}
         toggleObservations={toggleObservations}
         isOneLayerRunning={isOneLayerRunning}
         toggleOneLayer={toggleOneLayer}
+        isOnelayerForecastEnabled={isOnelayerForecastEnabled}
+        toggleOnelayerForecast={toggleOnelayerForecast}
       />
     </div>
   );

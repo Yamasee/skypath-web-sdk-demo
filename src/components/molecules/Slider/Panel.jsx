@@ -2,7 +2,6 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../../lib/style-utils";
 
 const panel = cva([
-  "w-[450px]",
   "bg-slate-500/30",
   "flex flex-col",
   "items-center",
@@ -22,10 +21,19 @@ const panel = cva([
 const Panel = ({
   children,
   className,
+  width = "450px",
+  style,
   ...props
 }) => {
   return (
-    <div className={cn(panel(props), className)} {...props}>
+    <div
+      className={cn(panel(), className)}
+      style={{
+        width: typeof width === "number" ? `${width}px` : width,
+        ...style,
+      }}
+      {...props}
+    >
       {children}
     </div>
   );

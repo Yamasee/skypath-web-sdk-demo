@@ -1,24 +1,24 @@
 import { forwardRef } from "react";
 import { Root, Track, Range, Division, Thumb } from "../molecules/Slider";
 
-const NUMBER_OF_TICKS = 13;
+const NUMBER_OF_TICKS = 24;
 
-const NowcastingDivisionLabel = ({ children }) => (
+const ForecastDivisionLabel = ({ children }) => (
   <div className="absolute translate-y-6">{children}</div>
 );
-const NowcastingDivisionTick = () => (
+const ForecastDivisionTick = () => (
   <div className="w-0.5 h-1 bg-sky-950"></div>
 );
 
-const NowcastingSlider = forwardRef(({ ...props }, ref) => {
+const ForecastSlider = forwardRef(({ ...props }, ref) => {
   const getLabel = (i) => {
     return (
-      <NowcastingDivisionLabel>
+      <ForecastDivisionLabel>
         {i === 0
           ? ("Now")
           : (<>+{i}<span className="text-xs">h</span></>)
         }
-      </NowcastingDivisionLabel>
+      </ForecastDivisionLabel>
     );
   };
 
@@ -32,7 +32,7 @@ const NowcastingSlider = forwardRef(({ ...props }, ref) => {
             .map((_, i) => (
               <Division
                 key={i}
-                customTick={<NowcastingDivisionTick />}
+                customTick={<ForecastDivisionTick />}
                 customLabel={getLabel(i)}
               />
             )),
@@ -43,6 +43,6 @@ const NowcastingSlider = forwardRef(({ ...props }, ref) => {
   );
 });
 
-NowcastingSlider.displayName = "NowcastingSlider";
+ForecastSlider.displayName = "ForecastSlider";
 
-export {NowcastingSlider};
+export {ForecastSlider};
