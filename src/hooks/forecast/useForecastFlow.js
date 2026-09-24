@@ -1,4 +1,4 @@
-import {GeoJsonLayer} from "deck.gl";
+import {GeoJsonLayer} from "@deck.gl/layers";
 import {useEffect, useMemo, useCallback} from "react";
 import {MAP_GEOJSON_LAYER_CONFIG} from "../../config";
 import {useHexagonsFlow} from "../hexagons/useHexagonsFlow";

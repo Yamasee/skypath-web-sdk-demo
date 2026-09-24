@@ -1,6 +1,6 @@
 import DeckGL from "@deck.gl/react";
 import { Map } from "react-map-gl/mapbox";
-import { GeoJsonLayer } from "deck.gl";
+import { GeoJsonLayer } from "@deck.gl/layers";
 import { MAP_EQUATOR_CONFIG } from "../../config";
 import { CoreUtils, GeoUtils } from "@skypath-io/web-sdk";
 import { useEffect, useMemo } from "react";
