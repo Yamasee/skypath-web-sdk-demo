@@ -49,8 +49,7 @@ const MapControls = ({
         rounded-xl
         backdrop-blur-md
         border
-      border-slate-400
-        border-opacity-30
+        border-slate-400/30
         flex
         flex-col
         gap-1.5

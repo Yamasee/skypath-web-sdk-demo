@@ -7,10 +7,10 @@ const thumb = cva(
   [
     "flex",
     "bg-white",
-    "rounded-sm",
-    "shadow",
+    "rounded-xs",
+    "shadow-sm",
     "cursor-grab",
-    "focus-visible:outline-none",
+    "focus-visible:outline-hidden",
     "disabled:pointer-events-none",
     "disabled:opacity-50",
     "relative",
@@ -18,8 +18,8 @@ const thumb = cva(
   {
     variants: {
       orientation: {
-        horizontal: "aspect-[11/3]",
-        vertical: "aspect-[3/11]",
+        horizontal: "aspect-11/3",
+        vertical: "aspect-3/11",
       },
       withDot: {
         true: [

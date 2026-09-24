@@ -15,7 +15,7 @@ const button = cva([
   "leading-6",
   "text-white",
   "rounded-md",
-  "focus-visible:outline",
+  "focus-visible:outline-solid",
   "focus-visible:outline-2",
   "focus-visible:outline-offset-2",
   "focus-visible:outline-violet-600",

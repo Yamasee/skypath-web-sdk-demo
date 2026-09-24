@@ -1,6 +1,21 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --shadow-light: 0 0 10px 0 rgba(0, 0, 0, 0.25);
+  --shadow-dark: 0 0 4px 0 rgba(0, 0, 0, 0.4);
+  --shadow-darkest: 0 0 2px 0 hsla(0, 0%, 9%, 0.35);
+}
+
+/* Tailwind v3 default border color */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 html, body {
   margin: 0;
