@@ -20,9 +20,9 @@ const ALTITUDE_SLIDER_INITIAL_VALUE = [
 const SEVERITY_OPTIONS = [
   { value: Observations.availableConfigInputs.severity.smooth, label: 'Smooth' },
   { value: Observations.availableConfigInputs.severity.light, label: 'Light' },
-  { value: Observations.availableConfigInputs.severity.light_moderate, label: 'Light-Moderate' },
+  { value: Observations.availableConfigInputs.severity.lightModerate, label: 'Light-Moderate' },
   { value: Observations.availableConfigInputs.severity.moderate, label: 'Moderate' },
-  { value: Observations.availableConfigInputs.severity.severe, label: 'Severe' },
+  { value: Observations.availableConfigInputs.severity.moderateSevere, label: 'Moderate-Severe' },
 ]
 
 const AIRCRAFT_CATEGORY_OPTIONS = [
