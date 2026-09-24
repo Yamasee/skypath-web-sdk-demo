@@ -37,7 +37,8 @@ const useMapLayers = ({
   // OneLayer
   const {
     layer: oneLayer,
-    toggle: toggleOneLayer,
+    toggle: toggleOneLayerFlow,
+    stop: stopOneLayer,
     isProcessing: isOneLayerLoading,
     isRunning: isOneLayerRunning
   } = useOneLayerFlow({
@@ -57,7 +58,8 @@ const useMapLayers = ({
   // Observations
   const {
     layer: observationsLayer,
-    toggle: toggleObservations,
+    toggle: toggleObservationsFlow,
+    stop: stopObservations,
     isProcessing: isObservationsLoading,
     isRunning: isRunningObservations,
   } = useObservationsFlow({
@@ -86,6 +88,17 @@ const useMapLayers = ({
       selectedForecast,
     }
   });
+
+  // OneLayer already includes observations: run one of them, not both
+  const toggleOneLayer = () => {
+    stopObservations();
+    toggleOneLayerFlow();
+  };
+
+  const toggleObservations = () => {
+    stopOneLayer();
+    toggleObservationsFlow();
+  };
 
   const layers = [
     observationsLayer,

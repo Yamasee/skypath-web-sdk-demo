@@ -10,13 +10,15 @@ const useObservationsFlow = ({ sdk, polygon, options }) => {
   const flow = useMemo(() => sdk.createObservationsFlow(), [sdk]);
 
   // Use flow
+  // OneLayer already includes observations, so Observations starts only when OneLayer is not available
   const {
     data,
     updateConfig,
     toggle,
+    stop,
     isRunning,
     isProcessing,
-  } = useHexagonsFlow(flow);
+  } = useHexagonsFlow(flow, { autoStart: !sdk.IS_ONELAYER_ENABLED });
 
   // Update config
   useEffect(() => {
@@ -47,7 +49,7 @@ const useObservationsFlow = ({ sdk, polygon, options }) => {
     }),[isRunning, featureCollection]);
 
 
-  return { layer, toggle, isProcessing, isRunning };
+  return { layer, toggle, stop, isProcessing, isRunning };
 };
 
 export default useObservationsFlow;

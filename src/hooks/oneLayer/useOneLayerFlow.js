@@ -15,6 +15,7 @@ const useOneLayerFlow = ({ sdk, polygon, options }) => {
     data,
     updateConfig,
     toggle,
+    stop,
     isRunning,
     isProcessing,
   } = useHexagonsFlow(flow);
@@ -53,7 +54,7 @@ const useOneLayerFlow = ({ sdk, polygon, options }) => {
     }),[isRunning, featureCollection]);
 
 
-  return { layer, toggle, isProcessing, isRunning };
+  return { layer, toggle, stop, isProcessing, isRunning };
 };
 
 export default useOneLayerFlow;
