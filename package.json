@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite --force",
     "build": "vite build",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives",
+    "lint": "eslint . --report-unused-disable-directives",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -30,14 +30,16 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
-    "eslint": "^8.57.1",
+    "eslint": "^9.39.5",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.26",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.12.0",
     "tailwindcss": "^4.3.3",
     "vite": "^8.3.1"
   }

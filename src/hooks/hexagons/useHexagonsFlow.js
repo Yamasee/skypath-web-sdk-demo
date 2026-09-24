@@ -40,6 +40,8 @@ export const useHexagonsFlow = (createFlow, { autoStart = true } = {}) => {
     if (autoStart) {
       newFlow.start();
     }
+    // The flow is an external object that lives as long as the component is mounted
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFlow(newFlow);
     setIsRunning(newFlow.isRunning);
 
