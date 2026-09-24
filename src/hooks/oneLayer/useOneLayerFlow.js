@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { GeoJsonLayer } from "deck.gl";
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useCallback } from "react";
 import { MAP_ONELAYER_CONFIG } from "../../config";
 import { useHexagonsFlow } from "../hexagons/useHexagonsFlow";
 
@@ -8,17 +8,18 @@ const useOneLayerFlow = ({ sdk, polygon, options }) => {
   const { selectedMinSeverity, hours, selectedAltitudeDebounced, forecastAlt, aircraftCategory, selectedForecast, isOnelayerForecastEnabled } = options;
 
   // Create flow
-  const flow = useMemo(() => sdk.IS_ONELAYER_ENABLED ? sdk.createOneLayerFlow() : null, [sdk]);
+  const createFlow = useCallback(() => sdk.IS_ONELAYER_ENABLED ? sdk.createOneLayerFlow() : null, [sdk]);
 
   // Use flow
   const {
+    flow,
     data,
     updateConfig,
     toggle,
     stop,
     isRunning,
     isProcessing,
-  } = useHexagonsFlow(flow);
+  } = useHexagonsFlow(createFlow);
 
   // Update config
   useEffect(() => {

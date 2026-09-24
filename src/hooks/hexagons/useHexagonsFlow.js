@@ -1,8 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 
-export const useHexagonsFlow = (flow, { autoStart = true } = {}) => {
+/**
+ * Creates a flow on mount and terminates it on unmount.
+ * A terminated flow can't be started again, so every mount gets a new one.
+ */
+export const useHexagonsFlow = (createFlow, { autoStart = true } = {}) => {
+  const [flow, setFlow] = useState(null);
   const [data, setData] = useState(null);
-  const [isRunning, setIsRunning] = useState(() => flow?.isRunning || false);
+  const [isRunning, setIsRunning] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const stop = useCallback(() => {
@@ -25,30 +30,29 @@ export const useHexagonsFlow = (flow, { autoStart = true } = {}) => {
   }, [flow, stop]);
 
   useEffect(() => {
-    if (!flow) return;
+    const newFlow = createFlow();
+    if (!newFlow) return;
 
-    const dataHandler = (newData) => setData(newData);
-    flow.onData(dataHandler);
-    
-    if (flow.onIsProcessingChange) {
-      flow.onIsProcessingChange(setIsProcessing);
-    }
-    
-    if (flow.onError) {
-      flow.onError((error) => console.error("Flow error:", error));
-    }
-    
+    newFlow.onData(setData);
+    newFlow.onIsProcessingChange(setIsProcessing);
+    newFlow.onError((error) => console.error("Flow error:", error));
+
     if (autoStart) {
-      flow.start();
+      newFlow.start();
     }
-    setIsRunning(flow.isRunning);
+    setFlow(newFlow);
+    setIsRunning(newFlow.isRunning);
 
     return () => {
-      flow.terminate();
+      newFlow.terminate();
+      setFlow(null);
+      setData(null);
+      setIsRunning(false);
     };
-  }, [flow, autoStart]);
+  }, [createFlow, autoStart]);
 
   return {
+    flow,
     data,
     updateConfig: flow?.updateConfig,
     toggle,

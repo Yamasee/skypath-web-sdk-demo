@@ -1,5 +1,5 @@
 import {GeoJsonLayer} from "deck.gl";
-import {useEffect, useMemo} from "react";
+import {useEffect, useMemo, useCallback} from "react";
 import {MAP_ADSB_MIDDLE_CONFIG, MAP_ADSB_RING_CONFIG} from "../../config";
 import {useHexagonsFlow} from "../hexagons/useHexagonsFlow";
 import {useHexagonsFiltering} from "../hexagons/useHexagonsFiltering.js";
@@ -10,16 +10,17 @@ const useAdsbFlow = ({ sdk , polygon, options }) => {
   const {selectedMinSeverity, selectedAltitudeDebounced, hours } = options;
 
   // Create flow
-  const flow = useMemo(() => sdk.IS_ADSB_ENABLED  ? sdk.createAdsbFlow() : null, [sdk]);
+  const createFlow = useCallback(() => sdk.IS_ADSB_ENABLED  ? sdk.createAdsbFlow() : null, [sdk]);
 
   // Use flow
   const {
+    flow,
     data,
     updateConfig,
     toggle,
     isRunning,
     isProcessing,
-  } = useHexagonsFlow(flow);
+  } = useHexagonsFlow(createFlow);
 
   const { filteredData } = useHexagonsFiltering(
     data,

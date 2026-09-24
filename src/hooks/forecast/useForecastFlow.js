@@ -1,5 +1,5 @@
 import {GeoJsonLayer} from "deck.gl";
-import {useEffect, useMemo} from "react";
+import {useEffect, useMemo, useCallback} from "react";
 import {MAP_GEOJSON_LAYER_CONFIG} from "../../config";
 import {useHexagonsFlow} from "../hexagons/useHexagonsFlow";
 
@@ -7,16 +7,17 @@ const useForecastFlow = ({ sdk , polygon, options }) => {
   const {selectedMinSeverity, selectedAltitudeDebounced, selectedForecast } = options;
 
   // Create flow
-  const flow = useMemo(() => sdk.IS_FORECAST_ENABLED ? sdk.createForecastFlow() : null, [sdk]);
+  const createFlow = useCallback(() => sdk.IS_FORECAST_ENABLED ? sdk.createForecastFlow() : null, [sdk]);
 
   // Use flow
   const {
+    flow,
     data,
     updateConfig,
     toggle,
     isRunning,
     isProcessing,
-  } = useHexagonsFlow(flow);
+  } = useHexagonsFlow(createFlow);
 
   // get the data in a featureCollection format
   const featureCollection = useMemo(() => data?.toFeatureCollection(), [data]);
