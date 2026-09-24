@@ -54,7 +54,6 @@ const useAdsbFlow = ({ sdk , polygon, options }) => {
       middleArea,
       ring,
     }
-    // return GeoUtils.getHexagonsFeatureCollection({ hexagons });
   }, [filteredData]);
 
   // Update flow config

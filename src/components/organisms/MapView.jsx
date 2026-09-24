@@ -3,7 +3,7 @@ import { Map } from "react-map-gl";
 import { GeoJsonLayer } from "deck.gl";
 import { MAP_EQUATOR_CONFIG } from "../../config";
 import { CoreUtils, GeoUtils } from "@skypath-io/web-sdk";
-import { useEffect, useCallback } from "react";
+import { useEffect, useMemo } from "react";
 import { DEBOUNCE_DELAY } from "../../lib/constants";
 
 const MapView = ({
@@ -16,15 +16,16 @@ const MapView = ({
   onLoadMap,
   setPolygon,
 }) => {
-  const handleMapMove = useCallback(
-    CoreUtils.debounce({
-      fn: () => {
-        if (!mapIsReady) return;
-        const currentPolygon = GeoUtils.getMapPolygon({ map });
-        setPolygon(currentPolygon);
-      },
-      delay: DEBOUNCE_DELAY,
-    }),
+  const handleMapMove = useMemo(
+    () =>
+      CoreUtils.debounce({
+        fn: () => {
+          if (!mapIsReady) return;
+          const currentPolygon = GeoUtils.getMapPolygon({ map });
+          setPolygon(currentPolygon);
+        },
+        delay: DEBOUNCE_DELAY,
+      }),
     [map, mapIsReady, setPolygon]
   );
 

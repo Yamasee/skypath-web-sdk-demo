@@ -23,7 +23,7 @@ const useMapState = () => {
     ALTITUDE_SLIDER_INITIAL_VALUE
   );
 
-  const selectedAltitudeDebounced = useDebouncedValue(selectedAltitude, 500);
+  const selectedAltitudeDebounced = useDebouncedValue(selectedAltitude);
 
   const [bottomAlt, forecastAlt, topAlt] = selectedAltitude;
 
