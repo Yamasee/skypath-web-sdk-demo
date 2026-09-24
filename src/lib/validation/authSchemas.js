@@ -6,14 +6,14 @@ const baseAuthSchema = z.object({
 });
 
 export const apiKeyAuthSchema = baseAuthSchema.extend({
-  apiKey: z.string().min(10, { message: 'API key must be at least 10 characters' }),
-  userId: z.string().min(2, { message: 'User ID must be at least 2 characters' }),
-  companyName: z.string().min(2, { message: 'Company name must be at least 2 characters' }),
+  apiKey: z.string().min(10, { error: 'API key must be at least 10 characters' }),
+  userId: z.string().min(2, { error: 'User ID must be at least 2 characters' }),
+  companyName: z.string().min(2, { error: 'Company name must be at least 2 characters' }),
 });
 
 export const jwtAuthSchema = baseAuthSchema.extend({
-  signedJwt: z.string().min(10, { message: 'Signed JWT must be at least 10 characters' }),
-  partnerId: z.string().min(2, { message: 'Partner ID must be at least 2 characters' }),
+  signedJwt: z.string().min(10, { error: 'Signed JWT must be at least 10 characters' }),
+  partnerId: z.string().min(2, { error: 'Partner ID must be at least 2 characters' }),
 });
 
 export const authUnionSchema = z.union([apiKeyAuthSchema, jwtAuthSchema]);
