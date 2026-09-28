@@ -5,6 +5,7 @@ import { MAP_EQUATOR_CONFIG } from "../../config";
 import { CoreUtils, GeoUtils } from "@skypath-io/web-sdk";
 import { useEffect, useMemo } from "react";
 import { DEBOUNCE_DELAY } from "../../lib/constants";
+import { getHexagonTooltip } from "../../lib/tooltip-utils";
 
 const MapView = ({
   map,
@@ -47,6 +48,7 @@ const MapView = ({
       initialViewState={initialViewState}
       onViewStateChange={handleMapMove}
       controller
+      getTooltip={getHexagonTooltip}
       layers={mapLayers}
     >
       <Map

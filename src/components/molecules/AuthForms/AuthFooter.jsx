@@ -1,27 +1,24 @@
+import { CONTACT_URL, DOCS_URL } from "../../../lib/constants";
+import { Icon } from "../../atoms/Icon";
+
+const LINK = "text-accent hover:text-white";
+
 const AuthFooter = () => {
   return (
-    <div className="flex flex-col justify-center w-full gap-2 align-center">
-      <p className="text-sm leading-6 text-center text-gray-500">
-        {"Don't have credentials yet? "}
-        <a
-          href="https://skypath.io/contact/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-semibold text-violet-600 hover:text-violet-500 focus:outline-violet-600"
-        >
+    <div className="flex flex-wrap items-center gap-5 text-[12.5px] text-ink-muted">
+      <span>
+        No credentials yet?{" "}
+        <a href={CONTACT_URL} target="_blank" rel="noopener noreferrer" className={LINK}>
           Contact us
         </a>
-      </p>
-      <a
-        href="https://docs.skypath.io/js/introduction"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-xs font-semibold leading-4 text-center text-violet-600 hover:text-violet-500 focus:outline-violet-600"
-      >
-        SDK Documentation
+      </span>
+      <span className="h-3.5 w-px bg-white/12"></span>
+      <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1 ${LINK}`}>
+        SDK documentation
+        <Icon name="external" size={13} />
       </a>
     </div>
   );
 };
 
-export default AuthFooter; 
+export default AuthFooter;

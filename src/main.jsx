@@ -14,7 +14,7 @@ ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <ErrorBoundary FallbackComponent={Fallback}>
       <AuthWrapper>
-        {(sdk) => <App sdk={sdk} />}
+        {(sdk, sdkVersion) => <App sdk={sdk} sdkVersion={sdkVersion} />}
       </AuthWrapper>
     </ErrorBoundary>
   </React.StrictMode>

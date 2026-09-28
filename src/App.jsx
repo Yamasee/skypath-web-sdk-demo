@@ -1,20 +1,23 @@
-import { cn } from "./lib/style-utils";
 import { MapControls } from "./components/organisms/MapControls";
+import { MapHeader } from "./components/organisms/MapHeader";
 import MapLayersControl from "./components/molecules/MapLayersControl";
+import LoadingIndicator from "./components/molecules/LoadingIndicator";
 import MapView from "./components/organisms/MapView";
 import {
   MAPBOX_TOKEN,
   INITIAL_MAP_STYLE,
   INITIAL_MAP_VIEW_STATE,
+  SEVERITY_OPTIONS,
 } from "./config";
 import useMapLayers from "./hooks/general/useMapLayers";
 import useMapState from "./hooks/general/useMapState";
+import useLayerToggles from "./hooks/general/useLayerToggles";
 
-const App = ({ sdk }) => {
+const App = ({ sdk, sdkVersion }) => {
   const mapState = useMapState();
   const {
     map,
-    polygon, 
+    polygon,
     setPolygon,
     mapIsReady,
     selectedForecast,
@@ -26,9 +29,7 @@ const App = ({ sdk }) => {
     setHours,
     selectedAltitude,
     selectedAltitudeDebounced,
-    bottomAlt,
     forecastAlt,
-    topAlt,
     handleLoadMap,
     handleSetAircraftCategory,
     handleAltitudeChange,
@@ -38,11 +39,11 @@ const App = ({ sdk }) => {
 
   const {
     layers,
-    isLoadingLayers,
+    loadingLayerNames,
     layerControls
   } = useMapLayers({
-    sdk, 
-    polygon, 
+    sdk,
+    polygon,
     options: {
       selectedMinSeverity,
       selectedAltitudeDebounced,
@@ -54,33 +55,24 @@ const App = ({ sdk }) => {
     }
   });
 
-  const {
-    isRunningForecast,
-    toggleForecast,
-    isAdsbRunning,
-    toggleAdsbLayer,
-    isRunningObservations,
-    toggleObservations,
-    isOneLayerRunning,
-    toggleOneLayer
-  } = layerControls;
-
   const toggleOnelayerForecast = () => {
-    if (!isOneLayerRunning) {
+    if (!layerControls.isOneLayerRunning) {
       return;
     }
 
     setIsOnelayerForecastEnabled((state) => !state);
-  }
+  };
+
+  const layerToggles = useLayerToggles({
+    sdk,
+    layerControls,
+    isOnelayerForecastEnabled,
+    toggleOnelayerForecast,
+  });
 
   return (
-    <div 
-      className={cn(
-        "relative w-screen h-screen overflow-hidden border-4 border-[#191a1a]", 
-        isLoadingLayers && 'border-red-500'
-      )}
-    >
-      <MapView 
+    <div className="relative h-screen w-screen overflow-hidden bg-page">
+      <MapView
         map={map}
         mapIsReady={mapIsReady}
         initialViewState={INITIAL_MAP_VIEW_STATE}
@@ -90,6 +82,14 @@ const App = ({ sdk }) => {
         onLoadMap={handleLoadMap}
         setPolygon={setPolygon}
       />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(11,12,13,.85)_0%,rgba(11,12,13,0)_22%,rgba(11,12,13,0)_80%,rgba(11,12,13,.8)_100%)]"></div>
+      <MapHeader sdkVersion={sdkVersion} severityOptions={SEVERITY_OPTIONS.slice(1)} />
+      <div className="absolute top-6 right-7 z-10 flex flex-col items-end gap-3">
+        <MapLayersControl toggles={layerToggles} />
+        {loadingLayerNames.length > 0 && (
+          <LoadingIndicator layerNames={loadingLayerNames.join(", ")} />
+        )}
+      </div>
       <MapControls
         selectedAltitude={selectedAltitude}
         handleAltitudeChange={handleAltitudeChange}
@@ -97,25 +97,10 @@ const App = ({ sdk }) => {
         setSelectedForecast={setSelectedForecast}
         selectedMinSeverity={selectedMinSeverity}
         setSelectedMinSeverity={setSelectedMinSeverity}
-        bottomAlt={bottomAlt}
-        forecastAlt={forecastAlt}
-        topAlt={topAlt}
         aircraftCategory={aircraftCategory}
         setAircraftCategory={handleSetAircraftCategory}
         setHours={setHours}
         hours={hours}
-      />
-      <MapLayersControl 
-        isRunningForecast={isRunningForecast}
-        toggleForecast={toggleForecast}
-        isAdsbRunning={isAdsbRunning}
-        toggleAdsbLayer={toggleAdsbLayer}
-        isRunningObservations={isRunningObservations}
-        toggleObservations={toggleObservations}
-        isOneLayerRunning={isOneLayerRunning}
-        toggleOneLayer={toggleOneLayer}
-        isOnelayerForecastEnabled={isOnelayerForecastEnabled}
-        toggleOnelayerForecast={toggleOnelayerForecast}
       />
     </div>
   );

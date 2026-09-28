@@ -1,61 +1,43 @@
 import { cva } from "class-variance-authority";
 import { cn } from "../../lib/style-utils";
 
-const button = cva([
-  "flex",
-  "flex-col",
-  "items-center",
-  "justify-center",
-  "flex-1",
-  "gap-1",
-  "px-3",
-  "py-4",
-  "text-sm",
-  "font-semibold",
-  "leading-6",
-  "text-white",
-  "rounded-md",
-  "focus-visible:outline-solid",
-  "focus-visible:outline-2",
-  "focus-visible:outline-offset-2",
-  "focus-visible:outline-violet-600",
-], {
-  variants: {
-    variant: {
-      primary: [
-        "bg-violet-600",
-        "hover:bg-violet-500",
-      ],
-      secondary: [
-        "bg-white",
-        "text-violet-600",
-        "hover:bg-gray-100",
-      ],
+const button = cva(
+  [
+    "inline-flex",
+    "items-center",
+    "justify-center",
+    "gap-2.5",
+    "rounded-full",
+    "font-sans",
+    "font-semibold",
+    "whitespace-nowrap",
+    "cursor-pointer",
+    "transition-colors",
+    "disabled:cursor-not-allowed",
+    "disabled:opacity-50",
+  ],
+  {
+    variants: {
+      variant: {
+        primary: ["bg-[#F2F2F2]", "text-page", "hover:bg-white"],
+        secondary: ["bg-chip", "text-ink", "hover:bg-chip-active"],
+      },
+      size: {
+        md: ["h-[52px]", "px-6", "text-sm"],
+        lg: ["h-[54px]", "px-7", "text-[15px]"],
+        icon: ["size-11", "shrink-0", "p-0"],
+      },
     },
-    size: {
-      md: [
-        "px-2",
-        "py-3",
-      ],
-      lg: [
-        "px-3",
-        "py-4",
-      ],
+    defaultVariants: {
+      variant: "primary",
+      size: "lg",
     },
-  },
-  defaultVariants: {
-    variant: "primary",
-    size: "lg",
-  },
-})
+  }
+);
 
-const Button = ({
-  children,
-  className,
-  ...props
-}) => {
+const Button = ({ children, className, variant, size, type = "button", ...props }) => {
   return (
-    <button className={cn(button(props), className)} {...props}>
+    <button type={type} className={cn(button({ variant, size }), className)} {...props}>
       {children}
     </button>
   );

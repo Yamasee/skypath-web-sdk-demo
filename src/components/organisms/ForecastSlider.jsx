@@ -1,48 +1,28 @@
-import { forwardRef } from "react";
-import { Root, Track, Range, Division, Thumb } from "../molecules/Slider";
+import { useMemo } from "react";
+import { Root, Track, Range, Thumb, Chip, ScaleLabels, ScaleTicks } from "../molecules/Slider";
+import { formatForecastHour, getForecastScale, withoutCoveredLabels } from "../../lib/slider-utils";
 
-const NUMBER_OF_TICKS = 24;
-
-const ForecastDivisionLabel = ({ children }) => (
-  <div className="absolute translate-y-6">{children}</div>
-);
-const ForecastDivisionTick = () => (
-  <div className="w-0.5 h-1 bg-sky-950"></div>
-);
-
-const ForecastSlider = forwardRef(({ ...props }, ref) => {
-  const getLabel = (i) => {
-    return (
-      <ForecastDivisionLabel>
-        {i === 0
-          ? ("Now")
-          : (<>+{i}<span className="text-xs">h</span></>)
-        }
-      </ForecastDivisionLabel>
-    );
-  };
+const ForecastSlider = ({ className, value, min, max, ...props }) => {
+  const scale = useMemo(() => getForecastScale({ min, max }), [min, max]);
+  const [hour] = value;
+  const labels = useMemo(() => withoutCoveredLabels(scale.labels, hour), [scale, hour]);
 
   return (
-    <Root ref={ref} {...props}>
-      <Track>
-        <Range />
-        {[
-          Array(NUMBER_OF_TICKS)
-            .fill()
-            .map((_, i) => (
-              <Division
-                key={i}
-                customTick={<ForecastDivisionTick />}
-                customLabel={getLabel(i)}
-              />
-            )),
-        ]}
+    <Root className={className} value={value} min={min} max={max} {...props}>
+      <Track orientation="horizontal">
+        <Range className="inset-y-0 bg-linear-to-r from-white/0 to-white/6" />
+        <ScaleLabels orientation="horizontal" labels={labels} />
       </Track>
-      <Thumb size="sm" />
+      <Thumb aria-label="Forecast time">
+        <span className="absolute flex h-10 w-4 -translate-1/2 cursor-grab items-center justify-center gap-0.5 border-x border-white/80 bg-linear-to-r from-[#3A3A3A] to-[#242424]">
+          <span className="h-3 w-px bg-white/85"></span>
+          <span className="h-3 w-px bg-white/85"></span>
+        </span>
+        <Chip className="-top-5 -translate-1/2 px-[7px]">{formatForecastHour(hour)}</Chip>
+      </Thumb>
+      <ScaleTicks orientation="horizontal" ticks={scale.ticks} className="inset-px" />
     </Root>
   );
-});
+};
 
-ForecastSlider.displayName = "ForecastSlider";
-
-export {ForecastSlider};
+export { ForecastSlider };

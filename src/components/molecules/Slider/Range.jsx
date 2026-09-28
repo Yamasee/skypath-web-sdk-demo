@@ -1,21 +1,8 @@
 import { SliderRange } from "@radix-ui/react-slider";
-
-import { cva } from "class-variance-authority";
-import { forwardRef } from "react";
 import { cn } from "../../../lib/style-utils";
 
-const range = cva(['absolute']);
+const Range = ({ className, ...props }) => {
+  return <SliderRange className={cn("absolute", className)} {...props} />;
+};
 
-const Range = forwardRef(({ className, ...props }, ref) => {
-  return (
-    <SliderRange
-      ref={ref}
-      className={cn(range(props),className)}
-      {...props}
-    />
-  );
-});
-
-Range.displayName = "Range";
-
-export {Range};
+export { Range };

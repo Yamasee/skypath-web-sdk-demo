@@ -1,36 +1,32 @@
 import { Root as SliderRoot } from "@radix-ui/react-slider";
-
 import { cva } from "class-variance-authority";
-import { forwardRef } from "react";
 import { cn } from "../../../lib/style-utils";
 
-const root = cva([
-  "relative",
-  "flex",
-  "w-full",
-  "cursor-pointer",
-  "touch-none",
-  "select-none",
-  "items-center",
-  "h-6",
-]);
+const root = cva(
+  ["relative", "flex", "touch-none", "select-none", "data-disabled:pointer-events-none"],
+  {
+    variants: {
+      orientation: {
+        horizontal: ["h-10", "w-full", "items-center"],
+        vertical: ["h-full", "w-10", "flex-col", "items-center"],
+      },
+    },
+    defaultVariants: {
+      orientation: "horizontal",
+    },
+  }
+);
 
-const Root = forwardRef(({
-  className,
-  children,
-  ...props
-}, ref) => {
+const Root = ({ className, children, orientation = "horizontal", ...props }) => {
   return (
     <SliderRoot
-      ref={ref}
-      className={cn(root(props), className)}
+      className={cn(root({ orientation }), className)}
+      orientation={orientation}
       {...props}
     >
       {children}
     </SliderRoot>
   );
-});
+};
 
-Root.displayName = "SliderRoot";
-
-export {Root};
+export { Root };
