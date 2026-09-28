@@ -5,6 +5,7 @@ on:
     branches: [main, master]
     paths-ignore:
       - 'README.md'
+  pull_request:
 
 jobs:
   install:
@@ -12,18 +13,12 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: read
-      packages: read
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: 20.11.1
+          node-version-file: .nvmrc
           cache: npm
-          registry-url: 'https://npm.pkg.github.com'
 
       - name: Cache Dependencies
         id: cache
@@ -44,7 +39,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: 20.11.1
+          node-version-file: .nvmrc
           cache: 'npm'
 
       - name: Restore Dependencies
@@ -55,19 +50,19 @@ jobs:
 
       - run: npm run lint
 
+      - name: Build
+        if: github.event_name == 'pull_request'
+        run: npm run build
+
   build-and-deploy:
     name: Build and Deploy to GitHub Pages
     runs-on: ubuntu-22.04
     needs: [install, lint]
+    if: github.event_name == 'push'
     permissions:
       pages: write
       id-token: write
       contents: read
-      packages: read
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
 
       - uses: actions/checkout@v6
@@ -75,7 +70,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/setup-node@v6
         with:
-          node-version: 20.11.1
+          node-version-file: .nvmrc
           cache: 'npm'
       
       - name: Restore Dependencies

@@ -6,7 +6,7 @@ const LayerToggleButton = ({ name, isRunning, onClick }) => (
     className={cn(
       "px-2 py-1 rounded-md w-full transition-colors",
       isRunning
-        ? "bg-gradient-to-b from-white to-gray-100 text-gray-950"
+        ? "bg-linear-to-b from-white to-gray-100 text-gray-950"
         : "bg-gray-200 text-gray-400 hover:bg-gray-300"
     )}
     onClick={onClick}

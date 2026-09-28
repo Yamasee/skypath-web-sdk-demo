@@ -20,9 +20,9 @@ const ALTITUDE_SLIDER_INITIAL_VALUE = [
 const SEVERITY_OPTIONS = [
   { value: Observations.availableConfigInputs.severity.smooth, label: 'Smooth' },
   { value: Observations.availableConfigInputs.severity.light, label: 'Light' },
-  { value: Observations.availableConfigInputs.severity.light_moderate, label: 'Light-Moderate' },
+  { value: Observations.availableConfigInputs.severity.lightModerate, label: 'Light-Moderate' },
   { value: Observations.availableConfigInputs.severity.moderate, label: 'Moderate' },
-  { value: Observations.availableConfigInputs.severity.severe, label: 'Severe' },
+  { value: Observations.availableConfigInputs.severity.moderateSevere, label: 'Moderate-Severe' },
 ]
 
 const AIRCRAFT_CATEGORY_OPTIONS = [
@@ -56,25 +56,30 @@ const ALTITUDE_SLIDER_CONFIG = {
 };
 // dark
 const INITIAL_MAP_STYLE = "mapbox://styles/mapbox/dark-v9";
-const DEFAULT_DEBOUNCE_TIME = 500;
 // Map layers configurations
+const SEVERITY_COLORS = {
+  0: [255, 250, 250, 100],
+  1: [255, 234, 0, 200],
+  2: [255, 193, 50, 200],
+  3: [255, 146, 16, 200],
+  4: [248, 70, 14, 200],
+  5: [248, 70, 14, 200],
+};
+
+const FORECAST_DEFAULT_COLOR = [0, 0, 0, 255 * 0.4];
+const FORECAST_SEVERITY_COLORS = {
+  2: [255, 205, 32, 255 * 0.4],
+  3: [255, 122, 0, 255 * 0.4],
+  4: [249, 66, 10, 255 * 0.4],
+};
+
 const MAP_GEOJSON_LAYER_CONFIG = {
   id: "geojson-layer",
   wrapLongitude: true,
   extruded: false,
   filled: true,
   getElevation: 1,
-  getFillColor: (data) => {
-    const { sev } = data.properties;
-    const DEFAULT_COLOR = [0, 0, 0, 255 * 0.4];
-    const COLOR_MAPPING = {
-      2: [255, 205, 32, 255 * 0.4],
-      3: [255, 122, 0, 255 * 0.4],
-      4: [249, 66, 10, 255 * 0.4],
-    };
-    const color = COLOR_MAPPING[sev];
-    return color || DEFAULT_COLOR;
-  },
+  getFillColor: (data) => FORECAST_SEVERITY_COLORS[data.properties.sev] || FORECAST_DEFAULT_COLOR,
   billboard: false,
   sizeMinPixels: 0.1,
   sizeMaxPixels: 1.5,
@@ -94,17 +99,7 @@ const MAP_OBSERVATION_CONFIG = {
   lineWidthMinPixels: 1,
   getLineColor: () => [100, 100, 100, 100],
   getPolygonOffset: () => [0, 0],
-  getFillColor: (d) => {
-    const severityColorMap = {
-      0: [255, 250, 250, 100],
-      1: [255, 234, 0, 200],
-      2: [255, 193, 50, 200],
-      3: [255, 146, 16, 200],
-      4: [248, 70, 14, 200],
-      5: [248, 70, 14, 200],
-    };
-    return severityColorMap[d.properties.sev];
-  },
+  getFillColor: (d) => SEVERITY_COLORS[d.properties.sev],
   pickable: true,
   autoHighlight: true,
 };
@@ -117,17 +112,7 @@ const MAP_ONELAYER_CONFIG = {
   billboard: true,
   sizeMinPixels: 0.1,
   sizeMaxPixels: 1.5,
-  getFillColor: (d) => {
-    const severityColorMap = {
-      0: [255, 250, 250, 100],
-      1: [255, 234, 0, 200],
-      2: [255, 193, 50, 200],
-      3: [255, 146, 16, 200],
-      4: [248, 70, 14, 200],
-      5: [248, 70, 14, 200],
-    };
-    return severityColorMap[d.properties.sev];
-  },
+  getFillColor: (d) => SEVERITY_COLORS[d.properties.sev],
   stroked: true,
   getLineColor: [128, 128, 128, 128],
   lineWidthScale: 2,
@@ -170,17 +155,7 @@ const MAP_ADSB_MIDDLE_CONFIG = {
   lineWidthMinPixels: 1,
   getLineColor: () => [100, 100, 100, 100],
   getPolygonOffset: () => [0, 0],
-  getFillColor: (d) => {
-    const severityColorMap = {
-      0: [255, 250, 250, 100],
-      1: [255, 234, 0, 200],
-      2: [255, 193, 50, 200],
-      3: [255, 146, 16, 200],
-      4: [248, 70, 14, 200],
-      5: [248, 70, 14, 200],
-    };
-    return severityColorMap[d.properties.sev];
-  },
+  getFillColor: (d) => SEVERITY_COLORS[d.properties.sev],
   pickable: true,
   autoHighlight: true,
 };
@@ -198,30 +173,6 @@ const MAP_ADSB_RING_CONFIG = {
   getLineColor: () => [100, 100, 100, 100],
   getPolygonOffset: () => [0, 0],
 };
-const MAP_H3_LAYER_CONFIG = {
-  id: "h3-layer",
-  wrapLongitude: true,
-  extruded: true,
-  filled: true,
-  getElevation: 1,
-  getFillColor: (data) => {
-    const { sev } = data;
-    const DEFAULT_COLOR = [0, 0, 0, 255 * 0.4];
-    const COLOR_MAPPING = {
-      2: [255, 205, 32, 255 * 0.4],
-      3: [255, 122, 0, 255 * 0.4],
-      4: [249, 66, 10, 255 * 0.4],
-    };
-    const color = COLOR_MAPPING[sev];
-    return color || DEFAULT_COLOR;
-  },
-  getHexagon: (d) => d.hexId,
-  wireframe: false,
-  opacity: 1,
-  billboard: false,
-  pickable: true,
-};
-
 
 export {
   MAPBOX_TOKEN,
@@ -230,8 +181,6 @@ export {
   MAP_GEOJSON_LAYER_CONFIG,
   MAP_OBSERVATION_CONFIG,
   MAP_ONELAYER_CONFIG,
-  MAP_H3_LAYER_CONFIG,
-  DEFAULT_DEBOUNCE_TIME,
   ALTITUDE_SLIDER_CONFIG,
   ALTITUDE_SLIDER_INITIAL_VALUE,
   HOURS_OPTIONS,

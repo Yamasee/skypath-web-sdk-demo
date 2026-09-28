@@ -1,48 +1,64 @@
 import { useCallback, useEffect, useState } from "react";
 
-export const useHexagonsFlow = (flow) => {
+/**
+ * Creates a flow on mount and terminates it on unmount.
+ * A terminated flow can't be started again, so every mount gets a new one.
+ */
+export const useHexagonsFlow = (createFlow, { autoStart = true } = {}) => {
+  const [flow, setFlow] = useState(null);
   const [data, setData] = useState(null);
-  const [isRunning, setIsRunning] = useState(() => flow?.isRunning || false);
+  const [isRunning, setIsRunning] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  const stop = useCallback(() => {
+    if (!flow?.isRunning) return;
+
+    setData(null);
+    flow.stop();
+    setIsRunning(false);
+  }, [flow]);
 
   const toggle = useCallback(() => {
     if (!flow) return;
-    
+
     if (flow.isRunning) {
-      setData(null);
-      flow.stop();
-    } else {
-      flow.start();
+      stop();
+      return;
     }
-    setIsRunning(flow.isRunning);
-  }, [flow]);
-
-  useEffect(() => {
-    if (!flow) return;
-
-    const dataHandler = (newData) => setData(newData);
-    flow.onData(dataHandler);
-    
-    if (flow.onIsProcessingChange) {
-      flow.onIsProcessingChange(setIsProcessing);
-    }
-    
-    if (flow.onError) {
-      flow.onError((error) => console.error("Flow error:", error));
-    }
-    
     flow.start();
     setIsRunning(flow.isRunning);
+  }, [flow, stop]);
+
+  useEffect(() => {
+    const newFlow = createFlow();
+    if (!newFlow) return;
+
+    newFlow.onData(setData);
+    newFlow.onIsProcessingChange(setIsProcessing);
+    newFlow.onError((error) => console.error("Flow error:", error));
+
+    if (autoStart) {
+      newFlow.start();
+    }
+    // The flow is an external object that lives as long as the component is mounted
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFlow(newFlow);
+    setIsRunning(newFlow.isRunning);
 
     return () => {
-      flow.terminate();
+      newFlow.terminate();
+      setFlow(null);
+      setData(null);
+      setIsRunning(false);
     };
-  }, [flow]);
+  }, [createFlow, autoStart]);
 
   return {
+    flow,
     data,
     updateConfig: flow?.updateConfig,
     toggle,
+    stop,
     isRunning,
     isProcessing,
   };

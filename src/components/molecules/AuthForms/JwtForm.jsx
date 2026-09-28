@@ -8,7 +8,7 @@ const FieldError = ({ message }) => (
 const JwtForm = ({ formData, onChange, onSubmit, onBack, error, errors = {} }) => {
   return (
     <div className="space-y-6">
-      <div className="relative space-y-4 rounded-md shadow-sm">
+      <div className="relative space-y-4 rounded-md shadow-xs">
         <div>
           <TextInput
             name="signedJwt"

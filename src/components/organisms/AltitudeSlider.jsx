@@ -23,7 +23,7 @@ const AltitudeSlider = forwardRef(
         {Array.from({ length: NUMBER_OF_DIVISIONS })
           .map((_, index) => {
             const isMajor = index % MAJOR_PERIOD === 0;
-            const className = isMajor ? "w-[10px] h-0.5" : "w-1.5 h-[1px]";
+            const className = isMajor ? "w-[10px] h-0.5" : "w-1.5 h-px";
             return (
               <div
                 key={index}
@@ -31,7 +31,7 @@ const AltitudeSlider = forwardRef(
                   text-xs
                   -translate-x-1/2
                   bg-slate-500
-                  rounded-sm`,
+                  rounded-xs`,
                   className
                 )}
               >

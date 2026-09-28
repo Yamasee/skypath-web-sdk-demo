@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import createSkyPathSDK from "@skypath-io/web-sdk";
+import { z } from "zod";
 import { 
   ApiKeyForm, 
   JwtForm, 
@@ -23,25 +24,18 @@ import {
 const SDK_VERSION = pkg.dependencies[SDK_PACKAGE_NAME]?.replace("^", "") || "N/A";
 
 const getValidationErrors = (zodError) => {
-  if (!zodError.format) return { general: ERROR_MESSAGES.REQUIRED_FIELDS };
-  
-  const formatted = zodError.format();
-  
-  if (formatted._errors && formatted._errors.length > 0) {
-    return { general: formatted._errors[0] };
+  const { formErrors, fieldErrors } = z.flattenError(zodError);
+
+  if (formErrors.length > 0) {
+    return { general: formErrors[0] };
   }
-  
-  const fieldErrors = {};
-  Object.entries(formatted)
-    .filter(([key]) => key !== '_errors')
-    .forEach(([field, error]) => {
-      if (error._errors && error._errors.length > 0) {
-        fieldErrors[field] = error._errors[0];
-      }
-    });
-  
-  return Object.keys(fieldErrors).length > 0 
-    ? fieldErrors 
+
+  const firstFieldErrors = Object.fromEntries(
+    Object.entries(fieldErrors).map(([field, messages]) => [field, messages[0]])
+  );
+
+  return Object.keys(firstFieldErrors).length > 0
+    ? firstFieldErrors
     : { general: ERROR_MESSAGES.REQUIRED_FIELDS };
 };
 
