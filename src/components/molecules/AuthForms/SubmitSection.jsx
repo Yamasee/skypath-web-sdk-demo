@@ -2,7 +2,7 @@ import { Button } from "../../atoms/Button";
 import { Icon } from "../../atoms/Icon";
 
 const SubmitSection = () => (
-  <div className="flex flex-col gap-[18px]">
+  <div className="flex flex-col gap-[clamp(10px,2vh,18px)]">
     <Button type="submit" className="mt-1 w-full">
       Start the demo
       <Icon name="arrowRight" />

@@ -141,11 +141,11 @@ const AuthWrapper = ({ children }) => {
   const fieldErrors = errors || {};
 
   return (
-    <div className="flex min-h-full gap-4 bg-page p-4 select-none">
-      <main className="flex w-full max-w-[560px] shrink-0 flex-col justify-between gap-10 px-6 pt-10 pb-9 sm:pr-14 sm:pl-12">
+    <div className="flex h-dvh max-h-dvh gap-4 overflow-hidden bg-page p-4 select-none">
+      <main className="flex min-h-0 w-full max-w-[560px] shrink-0 flex-col justify-between gap-[clamp(16px,3vh,40px)] overflow-y-auto px-6 pt-[clamp(12px,4vh,40px)] pb-[clamp(12px,4vh,36px)] sm:pr-14 sm:pl-12">
         <AuthHeader sdkVersion={SDK_VERSION} />
 
-        <div className="flex flex-col gap-7">
+        <div className="flex flex-col gap-[clamp(16px,3vh,28px)]">
           <AuthIntro />
 
           <Tabs.Root value={authOption} onValueChange={handleAuthOptionSelect} className="flex flex-col gap-[18px]">
