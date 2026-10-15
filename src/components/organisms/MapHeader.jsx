@@ -22,12 +22,14 @@ const MapHeader = ({ sdkVersion, onLogout, severityOptions }) => {
           Log out
         </button>
       </div>
-      <div>
+      <div className="hidden xl:block">
         <h1 className="m-0 font-display text-[44px] leading-[1.05] font-light tracking-[-0.025em]">
           Live turbulence
         </h1>
       </div>
-      <SeverityLegend options={severityOptions} />
+      <div className="hidden xl:block">
+        <SeverityLegend options={severityOptions} />
+      </div>
     </header>
   );
 };

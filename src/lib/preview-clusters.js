@@ -102,18 +102,6 @@ const toHex = ({ q, r, severity }, style) => {
   };
 };
 
-const toHazard = (hexes) => {
-  const turbulent = hexes.filter(({ severity }) => severity > 0);
-  if (!turbulent.length) return null;
-
-  const offset = [
-    turbulent.reduce((sum, { x }) => sum + x, 0) / turbulent.length,
-    turbulent.reduce((sum, { y }) => sum + y, 0) / turbulent.length,
-  ];
-  const radius = Math.max(...turbulent.map(({ x, y }) => Math.hypot(x - offset[0], y - offset[1]))) + PREVIEW_HEX_RADIUS;
-  return { offset, radius };
-};
-
 export const pickClusterKind = (random) => {
   const weights = Object.fromEntries(PREVIEW_CLUSTER_KINDS.map(({ weight }, index) => [index, weight]));
   return PREVIEW_CLUSTER_KINDS[Number(random.weighted(weights))];
@@ -127,6 +115,5 @@ export const generateCluster = (random, kind) => {
     layer: kind.layer,
     altitude: Math.round(random.between(...PREVIEW_CLUSTER_ALTITUDE)),
     hexes,
-    hazard: toHazard(hexes),
   };
 };

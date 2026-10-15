@@ -23,41 +23,32 @@ const modulo = (value, size) => ((value % size) + size) % size;
 const isClusterVisible = ({ layer, altitude }, { activeLayer, altitude: [low, , high] }) =>
   PREVIEW_LAYER_FLOWS[activeLayer].includes(layer) && altitude >= low && altitude <= high;
 
-const getObstacles = (clusters, filters) =>
+const getHazards = (clusters, filters) =>
   clusters
-    .filter((cluster) => cluster.hazard && isClusterVisible(cluster, filters))
-    .map(({ center, hazard: { offset, radius } }) => {
-      const hazardCenter = [center[0] + offset[0], center[1] + offset[1]];
-      return { center: hazardCenter, radius, along: dot(hazardCenter, BASE) };
-    })
-    .sort((a, b) => a.along - b.along);
+    .filter((cluster) => isClusterVisible(cluster, filters))
+    .flatMap(({ center, hexes }) =>
+      hexes
+        .filter(({ severity }) => severity > 0)
+        .map(({ x, y }) => {
+          const point = [center[0] + x, center[1] + y];
+          return { along: dot(point, BASE), lateral: dot(point, NORMAL) };
+        })
+    );
 
-const getNearbyObstacles = (obstacles, pos) => {
-  const along = dot(pos, BASE);
-  return obstacles.filter((obstacle) => Math.abs(obstacle.along - along) < PREVIEW_FLIGHT.avoidReach + obstacle.radius);
-};
+const getNearbyHazards = (hazards, along) =>
+  hazards.filter((hazard) => Math.abs(hazard.along - along) < PREVIEW_FLIGHT.avoidReach * 2);
 
-const findBlocking = (pos, obstacles) => {
-  let blocking = null;
-  for (const { center, radius } of obstacles) {
-    const relative = [center[0] - pos[0], center[1] - pos[1]];
-    const along = dot(relative, BASE);
-    const lateral = dot(relative, NORMAL);
-    const isAhead = along > -radius * PREVIEW_FLIGHT.avoidLead && along < PREVIEW_FLIGHT.avoidReach;
-    const isOnPath = Math.abs(lateral) < radius + PREVIEW_FLIGHT.avoidMargin;
-    if (isAhead && isOnPath && (!blocking || along < blocking.along)) blocking = { center, radius, along, lateral };
-  }
-  return blocking;
-};
+const isBlocked = (hazards, lateral) => hazards.find((hazard) => Math.abs(hazard.lateral - lateral) < PREVIEW_FLIGHT.avoidClearance);
 
-const getTarget = (pos, obstacles) => {
-  const blocking = findBlocking(pos, obstacles);
-  if (!blocking) return fromFrame(dot(pos, BASE) + PREVIEW_FLIGHT.returnLookahead, 0);
-
-  const { center, radius, lateral } = blocking;
-  const clearance = (radius + PREVIEW_FLIGHT.avoidMargin) * (lateral >= 0 ? -1 : 1);
-  const lead = radius * PREVIEW_FLIGHT.avoidLead;
-  return [center[0] + NORMAL[0] * clearance + BASE[0] * lead, center[1] + NORMAL[1] * clearance + BASE[1] * lead];
+const getClearLateral = (hazards, along, lateral) => {
+  const ahead = hazards.filter(
+    (hazard) => hazard.along > along - PREVIEW_FLIGHT.avoidBehind && hazard.along < along + PREVIEW_FLIGHT.avoidReach
+  );
+  let low = 0;
+  let high = 0;
+  for (let hit = isBlocked(ahead, low); hit; hit = isBlocked(ahead, low)) low = hit.lateral - PREVIEW_FLIGHT.avoidClearance - 1;
+  for (let hit = isBlocked(ahead, high); hit; hit = isBlocked(ahead, high)) high = hit.lateral + PREVIEW_FLIGHT.avoidClearance + 1;
+  return Math.abs(lateral - low) < Math.abs(lateral - high) ? low : high;
 };
 
 const headingAt = (route, index) => {
@@ -69,21 +60,23 @@ const headingAt = (route, index) => {
 };
 
 const planRoute = (start, clusters, filters) => {
-  const obstacles = getObstacles(clusters, filters);
+  const hazards = getHazards(clusters, filters);
   const smoothing = 1 - Math.exp(-PREVIEW_FLIGHT.turnResponse * PREVIEW_FLIGHT.routeStep);
   const route = [...start];
   let heading = headingAt(route, route.length - 1);
+  let nearby = getNearbyHazards(hazards, dot(route[route.length - 1], BASE));
 
-  let nearby = getNearbyObstacles(obstacles, route[route.length - 1]);
   while (route.length < ROUTE_POINTS) {
     const pos = route[route.length - 1];
-    if (route.length % PREVIEW_FLIGHT.obstacleRefresh === 0) nearby = getNearbyObstacles(obstacles, pos);
-    const [tx, ty] = getTarget(pos, nearby);
+    const along = dot(pos, BASE);
+    if (route.length % PREVIEW_FLIGHT.obstacleRefresh === 0) nearby = getNearbyHazards(hazards, along);
+    const [tx, ty] = fromFrame(along + PREVIEW_FLIGHT.steerDistance, getClearLateral(nearby, along, dot(pos, NORMAL)));
     heading += wrapAngle(Math.atan2(ty - pos[1], tx - pos[0]) - heading) * smoothing;
     route.push([pos[0] + Math.cos(heading) * STEP, pos[1] + Math.sin(heading) * STEP]);
   }
   return route;
 };
+
 
 export const createPreviewWorld = (seed, filters) => {
   const random = createRandom(seed);
@@ -103,7 +96,7 @@ export const replanPreviewRoute = (world, distance, filters) => ({
 });
 
 export const advancePreviewDistance = (distance, seconds) =>
-  (distance + PREVIEW_FLIGHT.speed * Math.min(seconds, PREVIEW_FLIGHT.maxFrameSeconds)) % (ROUTE_LENGTH - STEP * 2);
+  (distance + PREVIEW_FLIGHT.speed * Math.min(Math.max(seconds, 0), PREVIEW_FLIGHT.maxFrameSeconds)) % (ROUTE_LENGTH - STEP * 2);
 
 export const getPreviewHour = (distance, { min, max }) =>
   min + (((distance / PREVIEW_FLIGHT.speed) * PREVIEW_FLIGHT.hoursPerSecond) % (max - min));

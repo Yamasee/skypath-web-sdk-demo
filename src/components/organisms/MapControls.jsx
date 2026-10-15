@@ -35,7 +35,7 @@ const MapControls = ({
     <>
       <aside
         aria-label="Altitude and filters"
-        className="absolute top-[124px] right-7 bottom-[124px] z-10 flex max-h-[660px] w-[76px] flex-col items-center gap-2.5 select-none"
+        className="absolute top-[136px] right-7 bottom-[176px] z-10 xl:top-[124px] xl:bottom-[124px] flex max-h-[660px] w-[76px] flex-col items-center gap-2.5 select-none"
       >
         <Dropdown
           label="Aircraft category"
@@ -53,7 +53,7 @@ const MapControls = ({
         />
       </aside>
 
-      <div className="absolute right-7 bottom-6 left-7 z-10 flex items-center gap-4 select-none">
+      <div className="absolute right-7 bottom-10 left-7 z-10 flex flex-col-reverse items-stretch gap-3 select-none xl:flex-row xl:items-center xl:gap-4">
         <section
           aria-label="Forecast time"
           className="flex min-w-0 grow items-center gap-4"

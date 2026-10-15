@@ -84,7 +84,7 @@ const App = ({ sdk, sdkVersion, onLogout }) => {
       />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(11,12,13,.85)_0%,rgba(11,12,13,0)_22%,rgba(11,12,13,0)_80%,rgba(11,12,13,.8)_100%)]"></div>
       <MapHeader sdkVersion={sdkVersion} onLogout={onLogout} severityOptions={SEVERITY_OPTIONS.slice(1)} />
-      <div className="absolute top-6 right-7 z-10 flex flex-col items-end gap-3">
+      <div className="absolute top-[72px] left-7 z-10 flex flex-col items-start gap-3 xl:top-6 xl:right-7 xl:left-auto xl:items-end">
         <MapLayersControl toggles={layerToggles} />
         {loadingLayerNames.length > 0 && (
           <LoadingIndicator layerNames={loadingLayerNames.join(", ")} />
