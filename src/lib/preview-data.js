@@ -1,5 +1,5 @@
 import { MAP_LAYERS } from "./constants";
-import { FORECAST_DEFAULT_COLOR, FORECAST_SEVERITY_COLORS, SEVERITY_COLORS } from "../config";
+import { FORECAST_DEFAULT_COLOR, FORECAST_SEVERITY_COLORS, MAPBOX_TOKEN, SEVERITY_COLORS } from "../config";
 
 export const PREVIEW_HEX_RADIUS = 10;
 
@@ -76,8 +76,9 @@ export const PREVIEW_CLUSTER_KINDS = [
 ];
 
 export const PREVIEW_MAP = {
-  tileUrl: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-  attribution: "Imagery © Esri",
+  tileUrl: `https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}@2x.jpg90?access_token=${MAPBOX_TOKEN}`,
+  attribution: "© Mapbox © Maxar",
+  filter: "brightness(0.66) saturate(0.2)",
   tileSize: 256,
   zoom: 7,
   start: { lat: 45.5, lon: 1.5 },

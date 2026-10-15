@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { PREVIEW_HEX_POINTS } from "../../lib/preview-clusters";
+import { PREVIEW_MAP } from "../../lib/preview-data";
 
 const AIRCRAFT_PATH =
   "M11 1.6c.7 0 1.15.87 1.15 1.93v4.86l7.25 4.22v1.88l-7.25-2.16v4.31l2.1 1.6v1.2L11 18.52l-3.25.92v-1.2l2.1-1.6v-4.31L2.6 14.49v-1.88l7.25-4.22V3.53c0-1.06.45-1.93 1.15-1.93z";
@@ -36,12 +37,11 @@ const IllustrationMap = ({ frame, clusters }) => {
         <polygon id="h" points={PREVIEW_HEX_POINTS} />
       </defs>
       <g transform={worldTransform}>
-        <g className="[filter:saturate(.3)_brightness(.6)_contrast(1.05)]">
+        <g style={{ filter: PREVIEW_MAP.filter }}>
           {tiles.map((tile) => (
             <image key={tile.key} href={tile.href} x={tile.x} y={tile.y} width={tile.size + 0.5} height={tile.size + 0.5} />
           ))}
         </g>
-        <rect {...viewport} fill="#0D0D0D" fillOpacity=".25" />
         <rect {...viewport} fill="url(#grid)" />
 
         <ClusterLayer clusters={clusters} />
