@@ -2,6 +2,7 @@ import useForecastFlow from "../forecast/useForecastFlow";
 import useOneLayerFlow from "../oneLayer/useOneLayerFlow";
 import useAdsbFlow from "../adsb/useAdsbFlow";
 import useObservationsFlow from "../observations/useObservationsFlow";
+import { MAP_LAYERS } from "../../lib/constants";
 
 const useMapLayers = ({ 
   sdk, 
@@ -107,7 +108,12 @@ const useMapLayers = ({
     oneLayer,
   ].filter(Boolean);
 
-  const isLoadingLayers = isObservationsLoading || isAdsbLoading || isOneLayerLoading || isForecastLoading;
+  const loadingLayerNames = [
+    isOneLayerLoading && MAP_LAYERS.ONE_LAYER,
+    isObservationsLoading && MAP_LAYERS.OBSERVATIONS,
+    isForecastLoading && MAP_LAYERS.FORECAST,
+    isAdsbLoading && MAP_LAYERS.ADSB,
+  ].filter(Boolean);
 
   const layerControls = {
     isRunningForecast,
@@ -122,7 +128,7 @@ const useMapLayers = ({
 
   return {
     layers,
-    isLoadingLayers,
+    loadingLayerNames,
     layerControls
   };
 };

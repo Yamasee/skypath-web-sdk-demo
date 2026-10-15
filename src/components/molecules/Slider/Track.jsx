@@ -1,31 +1,28 @@
-import { forwardRef } from "react";
 import { SliderTrack } from "@radix-ui/react-slider";
-
 import { cva } from "class-variance-authority";
 import { cn } from "../../../lib/style-utils";
 
-const range = cva([
-  "relative",
-  "flex",
-  "flex-row",
-  "justify-between",
-  "relative",
-  "h-1.5",
-  "w-full",
-  "bg-slate-500",
-  "grow",
-  "rounded-full",
-  "pointer-events-none",
-]);
+const track = cva(
+  ["relative", "grow", "overflow-hidden", "rounded-lg", "border", "border-hairline", "bg-surface", "cursor-pointer"],
+  {
+    variants: {
+      orientation: {
+        horizontal: ["h-10", "w-full"],
+        vertical: ["h-full", "w-10"],
+      },
+    },
+    defaultVariants: {
+      orientation: "horizontal",
+    },
+  }
+);
 
-const Track = forwardRef(({ className, children, ...props }, ref) => {
+const Track = ({ className, children, orientation, ref, ...props }) => {
   return (
-    <SliderTrack ref={ref} className={cn(range(props), className)} {...props}>
+    <SliderTrack ref={ref} className={cn(track({ orientation }), className)} {...props}>
       {children}
     </SliderTrack>
   );
-});
+};
 
-Track.displayName = "Track";
-
-export {Track};
+export { Track };

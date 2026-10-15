@@ -12,17 +12,17 @@ const INITIAL_MAP_VIEW_STATE = {
 };
 
 const ALTITUDE_SLIDER_INITIAL_VALUE = [
-  Observations.availableConfigInputs.minAltitude, // Floor altitude
-  35, // Forecast
-  Observations.availableConfigInputs.maxAltitude, // Ceiling altitude
+  25, // Floor altitude
+  30, // Forecast
+  35, // Ceiling altitude
 ];
 
 const SEVERITY_OPTIONS = [
-  { value: Observations.availableConfigInputs.severity.smooth, label: 'Smooth' },
-  { value: Observations.availableConfigInputs.severity.light, label: 'Light' },
-  { value: Observations.availableConfigInputs.severity.lightModerate, label: 'Light-Moderate' },
-  { value: Observations.availableConfigInputs.severity.moderate, label: 'Moderate' },
-  { value: Observations.availableConfigInputs.severity.moderateSevere, label: 'Moderate-Severe' },
+  { value: Observations.availableConfigInputs.severity.smooth, label: 'Smooth', shortLabel: 'Smooth' },
+  { value: Observations.availableConfigInputs.severity.light, label: 'Light', shortLabel: 'Light' },
+  { value: Observations.availableConfigInputs.severity.lightModerate, label: 'Light-Moderate', shortLabel: 'Light-Mod.' },
+  { value: Observations.availableConfigInputs.severity.moderate, label: 'Moderate', shortLabel: 'Moderate' },
+  { value: Observations.availableConfigInputs.severity.moderateSevere, label: 'Moderate-Severe', shortLabel: 'Mod.-Severe' },
 ]
 
 const AIRCRAFT_CATEGORY_OPTIONS = [
@@ -49,10 +49,16 @@ const HOURS_OPTIONS = [
 
 // Default configurations
 const ALTITUDE_SLIDER_CONFIG = {
-  min: 5,
-  max: 50,
+  min: Observations.availableConfigInputs.minAltitude,
+  max: Observations.availableConfigInputs.maxAltitude,
   step: 1,
   minStepsBetweenThumbs: 3,
+};
+
+const FORECAST_SLIDER_CONFIG = {
+  min: 0,
+  max: 24,
+  step: 1,
 };
 // dark
 const INITIAL_MAP_STYLE = "mapbox://styles/mapbox/dark-v9";
@@ -175,6 +181,9 @@ const MAP_ADSB_RING_CONFIG = {
 };
 
 export {
+  SEVERITY_COLORS,
+  FORECAST_SEVERITY_COLORS,
+  FORECAST_DEFAULT_COLOR,
   MAPBOX_TOKEN,
   INITIAL_MAP_VIEW_STATE,
   INITIAL_MAP_STYLE,
@@ -182,6 +191,7 @@ export {
   MAP_OBSERVATION_CONFIG,
   MAP_ONELAYER_CONFIG,
   ALTITUDE_SLIDER_CONFIG,
+  FORECAST_SLIDER_CONFIG,
   ALTITUDE_SLIDER_INITIAL_VALUE,
   HOURS_OPTIONS,
   SEVERITY_OPTIONS,

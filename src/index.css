@@ -1,24 +1,76 @@
 @import 'tailwindcss';
 
 @theme {
-  --shadow-light: 0 0 10px 0 rgba(0, 0, 0, 0.25);
-  --shadow-dark: 0 0 4px 0 rgba(0, 0, 0, 0.4);
-  --shadow-darkest: 0 0 2px 0 hsla(0, 0%, 9%, 0.35);
+  --font-sans: "Urbanist", "Helvetica Neue", sans-serif;
+  --font-display: "Hanken Grotesk", "Helvetica Neue", sans-serif;
+
+  --color-page: #0D0D0D;
+  --color-surface: #161616;
+  --color-surface-raised: #1D1D1D;
+  --color-field: #141414;
+  --color-panel: rgba(18, 20, 21, 0.9);
+  --color-chip: #222222;
+  --color-chip-active: #2A2A2A;
+  --color-ruler-chip: #121212;
+  --color-hairline: rgba(255, 255, 255, 0.07);
+  --color-hairline-strong: rgba(255, 255, 255, 0.16);
+
+  --color-ink: #FEFEFE;
+  --color-ink-secondary: #A3A3A3;
+  --color-ink-muted: #8C8C8C;
+  --color-ink-dim: #7A7A7A;
+  --color-ink-disabled: #6E6E6E;
+
+  --color-accent: #C2D9FF;
+  --color-danger: #F8460E;
+  --color-danger-ink: #FFB4AB;
+  --color-danger-surface: #2A1512;
+
+  --color-sev-smooth: rgba(255, 255, 255, 0.55);
+  --color-sev-light: #FFEA00;
+  --color-sev-light-moderate: #FFC132;
+  --color-sev-moderate: #FF9210;
+  --color-sev-moderate-severe: #F8460E;
+
+  --shadow-glass: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 18px 40px -18px rgba(0, 0, 0, 0.6);
 }
 
-/* Tailwind v3 default border color */
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--color-hairline);
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: var(--color-page);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  ::placeholder {
+    color: var(--color-ink-dim);
   }
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
+.deck-tooltip {
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+@keyframes loading-sweep {
+  0% { transform: translateX(-20px); }
+  100% { transform: translateX(48px); }
 }

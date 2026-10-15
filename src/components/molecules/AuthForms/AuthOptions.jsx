@@ -1,21 +1,24 @@
-import { Button } from '../../atoms/Button';
-import { AUTH_OPTIONS } from '../../../lib/validation/authSchemas';
+import * as Tabs from "@radix-ui/react-tabs";
+import { AUTH_OPTIONS } from "../../../lib/validation/authSchemas";
 
-const AuthOptions = ({ onSelectOption }) => {
+const OPTIONS = [
+  { value: AUTH_OPTIONS.API_KEY, label: "API key" },
+  { value: AUTH_OPTIONS.SIGNED_JWT, label: "Signed JWT" },
+];
+
+const AuthOptions = () => {
   return (
-    <div className="flex flex-col gap-4 p-4 border border-gray-200 rounded-md">
-      <h3 className="text-lg font-semibold leading-6 text-center text-gray-900">
-        Select authorization option
-      </h3>
-      <div className="flex gap-2">
-        <Button onClick={() => onSelectOption(AUTH_OPTIONS.API_KEY)}>
-          API Key
-        </Button>
-        <Button onClick={() => onSelectOption(AUTH_OPTIONS.SIGNED_JWT)}>
-          Signed JWT
-        </Button>
-      </div>
-    </div>
+    <Tabs.List aria-label="Authorization option" className="flex gap-1 self-start rounded-full bg-surface p-1">
+      {OPTIONS.map((option) => (
+        <Tabs.Trigger
+          key={option.value}
+          value={option.value}
+          className="h-9 cursor-pointer rounded-full px-[18px] text-[13px] font-semibold text-ink-muted transition-colors hover:text-ink data-[state=active]:bg-chip-active data-[state=active]:text-ink"
+        >
+          {option.label}
+        </Tabs.Trigger>
+      ))}
+    </Tabs.List>
   );
 };
 

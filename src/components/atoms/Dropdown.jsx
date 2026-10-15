@@ -1,46 +1,44 @@
-import { useState } from 'react';
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { Icon } from "./Icon";
 
-const DropdownItem = (props) => {
-  const { item, handleChange } = props;
-  const { label, value } = item;
-
-  return (
-    <DropdownMenu.Item
-      onClick={() => handleChange(value)}
-      className="group text-[13px] leading-none text-violet11 rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-hidden hover:bg-gray-500 hover:text-white data-[disabled]:text-mauve8 data-disabled:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1"
-    >
-      {label}
-    </DropdownMenu.Item>
-  )
-}
-
-const Dropdown = (props) => {
-  const { options, onChange, defaultValue } = props;
-  const [selectedValue, setSelectedValue] = useState(defaultValue || options[0].value);
-
-  const handleChange = (value) => {
-    setSelectedValue(value);
-    onChange(value);
-  }
+const Dropdown = ({ options, value, onChange, label }) => {
+  const selected = options.find((item) => item.value === value) || options[0];
 
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <button
-          className="rounded-md w-[56px] h-[35px] inline-flex items-center justify-center text-violet11 bg-white outline-hidden hover:bg-violet3 focus:shadow-[0_0_0_2px] focus:shadow-black"
-          aria-label="Customise options"
+          type="button"
+          aria-label={label}
+          title={label}
+          className="inline-flex h-8 w-14 cursor-pointer items-center justify-center gap-0.5 rounded-full bg-chip text-xs font-semibold text-ink outline-none hover:bg-chip-active data-[state=open]:bg-chip-active"
         >
-          {options.find((item) => item.value === selectedValue).label}
+          {selected.label}
+          <Icon name="chevronDown" size={10} />
         </button>
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="min-w bg-white cursor-pointer rounded-md p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,23,24,0.35),0px_10px_20px_-15px_rgba(22,23,24,0.2)] will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
-          sideOffset={5}
+          side="left"
+          align="start"
+          sideOffset={10}
+          className="z-50 min-w-28 rounded-2xl border border-hairline bg-surface p-1.5 shadow-glass"
         >
-          {options.map((item) => <DropdownItem key={item.value} item={item} handleChange={handleChange} />)}
+          <DropdownMenu.Label className="px-2.5 pt-1 pb-1.5 text-[11px] font-medium text-ink-dim">
+            {label}
+          </DropdownMenu.Label>
+          <DropdownMenu.RadioGroup value={value} onValueChange={onChange}>
+            {options.map((item) => (
+              <DropdownMenu.RadioItem
+                key={item.value}
+                value={item.value}
+                className="flex h-8 cursor-pointer items-center rounded-lg px-2.5 text-[13px] font-medium text-ink-secondary outline-none select-none data-highlighted:bg-chip data-highlighted:text-ink data-[state=checked]:text-ink"
+              >
+                {item.label}
+              </DropdownMenu.RadioItem>
+            ))}
+          </DropdownMenu.RadioGroup>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>

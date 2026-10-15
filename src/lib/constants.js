@@ -11,8 +11,29 @@ export const ERROR_MESSAGES = {
 
 export const MAP_LAYERS = {
   FORECAST: "Forecast",
-  ADSB: "ADSB",
+  ADSB: "ADS-B",
   OBSERVATIONS: "Observations",
   ONE_LAYER: "OneLayer",
-  ONE_LAYER_FORECAST: "OneLayer Forecast",
+  ONE_LAYER_FORECAST: "Include forecast",
 };
+
+export const SEVERITY_SWATCHES = {
+  0: "var(--color-sev-smooth)",
+  1: "var(--color-sev-light)",
+  2: "var(--color-sev-light-moderate)",
+  3: "var(--color-sev-moderate)",
+  4: "var(--color-sev-moderate-severe)",
+};
+
+export const SEVERITY_LABELS = {
+  0: "Smooth",
+  1: "Light",
+  2: "Light-Moderate",
+  3: "Moderate",
+  4: "Moderate-Severe",
+};
+
+export const FORECAST_PLAYBACK_INTERVAL = 700;
+
+export const LAYER_LOCKED_HINT = "Not enabled for this account";
+export const LAYER_DEPENDENT_HINT = "Turn on OneLayer first";
