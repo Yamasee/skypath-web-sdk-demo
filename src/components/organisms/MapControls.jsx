@@ -35,7 +35,7 @@ const MapControls = ({
     <>
       <aside
         aria-label="Altitude and filters"
-        className="absolute top-[124px] right-7 bottom-[124px] z-10 flex max-h-[660px] w-[76px] flex-col items-center gap-2.5 rounded-full border border-hairline bg-panel pt-2.5 pb-[18px] select-none"
+        className="absolute top-[124px] right-7 bottom-[124px] z-10 flex max-h-[660px] w-[76px] flex-col items-center gap-2.5 select-none"
       >
         <Dropdown
           label="Aircraft category"
@@ -53,10 +53,10 @@ const MapControls = ({
         />
       </aside>
 
-      <div className="absolute right-7 bottom-6 left-7 z-10 flex gap-2 select-none">
+      <div className="absolute right-7 bottom-6 left-7 z-10 flex items-center gap-4 select-none">
         <section
           aria-label="Forecast time"
-          className="flex h-[76px] min-w-0 grow items-center gap-4 rounded-[26px] border border-hairline bg-panel pr-6 pl-3"
+          className="flex min-w-0 grow items-center gap-4"
         >
           <PlayButton isPlaying={isPlaying} onClick={togglePlayback} />
           <ForecastSlider

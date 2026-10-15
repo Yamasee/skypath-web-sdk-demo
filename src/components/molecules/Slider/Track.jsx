@@ -3,7 +3,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../../lib/style-utils";
 
 const track = cva(
-  ["relative", "grow", "rounded-[10px]", "border", "border-hairline", "bg-surface", "cursor-pointer"],
+  ["relative", "grow", "overflow-hidden", "rounded-lg", "border", "border-hairline", "bg-surface", "cursor-pointer"],
   {
     variants: {
       orientation: {

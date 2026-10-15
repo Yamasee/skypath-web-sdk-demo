@@ -134,15 +134,19 @@ const AuthWrapper = ({ children }) => {
       });
   }, [authOption, formData]);
 
+  const handleLogout = useCallback(() => setSDK(null), []);
+
   if (SDK && !errors) {
-    return children(SDK, SDK_VERSION);
+    return children(SDK, SDK_VERSION, handleLogout);
   }
 
   const fieldErrors = errors || {};
 
   return (
     <div className="flex h-dvh max-h-dvh gap-4 overflow-hidden bg-page p-4 select-none">
-      <main className="flex min-h-0 w-full max-w-[560px] shrink-0 flex-col justify-between gap-[clamp(16px,3vh,40px)] overflow-y-auto px-6 pt-[clamp(12px,4vh,40px)] pb-[clamp(12px,4vh,36px)] sm:pr-14 sm:pl-12">
+      <LoginPreview />
+
+      <main className="flex min-h-0 w-full max-w-[clamp(560px,46vw,820px)] shrink-0 flex-col justify-between gap-[clamp(16px,3vh,40px)] overflow-y-auto px-6 pt-[clamp(12px,4vh,40px)] pb-[clamp(12px,4vh,36px)] sm:pr-14 sm:pl-12">
         <AuthHeader sdkVersion={SDK_VERSION} />
 
         <div className="flex flex-col gap-[clamp(16px,3vh,28px)]">
@@ -165,8 +169,6 @@ const AuthWrapper = ({ children }) => {
 
         <AuthFooter />
       </main>
-
-      <LoginPreview />
     </div>
   );
 };

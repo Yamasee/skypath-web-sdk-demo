@@ -1,6 +1,12 @@
 const PATHS = {
   arrowRight: <path d="M5 12h14M13 6l6 6-6 6" />,
   external: <path d="M7.5 16.5l9-9M9.5 7.5h7v7" />,
+  logout: (
+    <>
+      <path d="M14 5h4a1 1 0 011 1v12a1 1 0 01-1 1h-4" />
+      <path d="M10 8l-4 4 4 4M6 12h9" />
+    </>
+  ),
   chevronDown: <path d="M7 10l5 5 5-5" />,
   lock: (
     <>

@@ -13,7 +13,7 @@ import useMapLayers from "./hooks/general/useMapLayers";
 import useMapState from "./hooks/general/useMapState";
 import useLayerToggles from "./hooks/general/useLayerToggles";
 
-const App = ({ sdk, sdkVersion }) => {
+const App = ({ sdk, sdkVersion, onLogout }) => {
   const mapState = useMapState();
   const {
     map,
@@ -83,7 +83,7 @@ const App = ({ sdk, sdkVersion }) => {
         setPolygon={setPolygon}
       />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(11,12,13,.85)_0%,rgba(11,12,13,0)_22%,rgba(11,12,13,0)_80%,rgba(11,12,13,.8)_100%)]"></div>
-      <MapHeader sdkVersion={sdkVersion} severityOptions={SEVERITY_OPTIONS.slice(1)} />
+      <MapHeader sdkVersion={sdkVersion} onLogout={onLogout} severityOptions={SEVERITY_OPTIONS.slice(1)} />
       <div className="absolute top-6 right-7 z-10 flex flex-col items-end gap-3">
         <MapLayersControl toggles={layerToggles} />
         {loadingLayerNames.length > 0 && (

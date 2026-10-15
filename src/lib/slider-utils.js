@@ -14,7 +14,7 @@ export const getAltitudeScale = ({ min, max }) => {
 
   for (let level = min; level <= max; level += 1) {
     const position = toPercent(level, min, max);
-    ticks.push({ position, size: level % 5 === 0 ? "major" : "minor" });
+    if (level > min && level < max) ticks.push({ position, size: level % 5 === 0 ? "major" : "minor" });
 
     if (level % 10 === 0) {
       labels.push({ position, text: String(normalizeAltitude(level)), align: edgeAlign(level, min, max) });
@@ -24,7 +24,7 @@ export const getAltitudeScale = ({ min, max }) => {
   return { ticks, labels };
 };
 
-export const formatForecastHour = (hour) => (hour === 0 ? "Now" : `+${hour}h`);
+export const formatForecastHour = (hour) => (Math.floor(hour) === 0 ? "Now" : `+${Math.floor(hour)}h`);
 
 export const getForecastScale = ({ min, max }) => {
   const ticks = [];
@@ -36,7 +36,7 @@ export const getForecastScale = ({ min, max }) => {
     const isLabelled = halfHours % 6 === 0;
     const isHour = halfHours % 2 === 0;
 
-    ticks.push({ position, size: isLabelled ? "major" : isHour ? "minor" : "micro" });
+    if (hour > min && hour < max) ticks.push({ position, size: isLabelled ? "major" : isHour ? "minor" : "micro" });
 
     if (isLabelled) {
       labels.push({

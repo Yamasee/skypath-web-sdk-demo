@@ -12,9 +12,9 @@ const INITIAL_MAP_VIEW_STATE = {
 };
 
 const ALTITUDE_SLIDER_INITIAL_VALUE = [
-  Observations.availableConfigInputs.minAltitude, // Floor altitude
-  35, // Forecast
-  Observations.availableConfigInputs.maxAltitude, // Ceiling altitude
+  25, // Floor altitude
+  30, // Forecast
+  35, // Ceiling altitude
 ];
 
 const SEVERITY_OPTIONS = [
@@ -181,6 +181,9 @@ const MAP_ADSB_RING_CONFIG = {
 };
 
 export {
+  SEVERITY_COLORS,
+  FORECAST_SEVERITY_COLORS,
+  FORECAST_DEFAULT_COLOR,
   MAPBOX_TOKEN,
   INITIAL_MAP_VIEW_STATE,
   INITIAL_MAP_STYLE,
