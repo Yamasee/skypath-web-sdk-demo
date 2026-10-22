@@ -7,7 +7,7 @@ A React app that shows the [SkyPath Web SDK](https://www.npmjs.com/package/@skyp
 | **Live demo**     | [yamasee.github.io/skypath-web-sdk-demo](https://yamasee.github.io/skypath-web-sdk-demo/) |
 | **SDK docs**      | [docs.skypath.io/js](https://docs.skypath.io/js/introduction)            |
 | **About the demo**| [docs.skypath.io/js/demo-app](https://docs.skypath.io/js/demo-app)       |
-| **Node**          | `>= 22.14.0` (see `.nvmrc`)                                              |
+| **Node**          | `24.22.1` (see `.nvmrc`)                                                 |
 
 ## Run it locally
 
