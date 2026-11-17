@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly" # required by the file, not used for security PRs
+    open-pull-requests-limit: 0 # 0 = no regular version updates, security only
+    groups:
+      security-minor-patch: # one PR, merged by dependabot-auto-merge.yaml
+        applies-to: security-updates
+        update-types: ["minor", "patch"]
+      security-major: # separate PR, waits for a human
+        applies-to: security-updates
+        update-types: ["major"]
